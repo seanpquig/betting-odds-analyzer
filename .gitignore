@@ -1,6 +1,12 @@
 *.class
 *.log
 
+# Play framework specific
+logs
+project/project
+project/target
+tmp
+
 # sbt specific
 .cache
 .history
@@ -13,5 +19,7 @@ project/boot/
 project/plugins/project/
 
 # Scala-IDE specific
+.idea
 .scala_dependencies
 .worksheet
+
