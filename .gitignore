@@ -5,6 +5,10 @@
 logs
 project/project
 project/target
+project/.sbtserver*
+.sbtserver
+RUNNING_PID
+
 tmp
 
 # sbt specific
