@@ -3,32 +3,32 @@
 <!DOCTYPE html>
 
 <html lang="en">
-    <head>
-        <title>@message</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
-    </head>
-    <body>
-        <h1>@message</h1>
-        <form class="fight_form">
-          <input list="fights" name="fight">
-          <datalist id="fights">
-            <option value="Conor McGregor vs. Jose Aldo">
-            <option value="Luke Rockhold vs. Chris Weidman">
-            <option value="Yoel Romero vs. Jacare Souza">
-          </datalist>
-          <input type="submit">
-        </form>
-    </body>
-
-    <script type="text/javascript">
-      function multiplyNode(node, count, deep) {
-        for (var i = 0, copy; i < count - 1; i++) {
-          copy = node.cloneNode(deep);
-          node.parentNode.insertBefore(copy, node);
-        }
-      }
-      multiplyNode(document.querySelector('.fight_form'), 5, true);
-    </script>
+  <head>
+    <title>@message</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    <script src="@routes.Assets.versioned("javascripts/fight.js")" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class='fight_selector'>
+      <h2>Fight Selector</h2>
+      <label>
+        Select a fight<br>
+        <input list="fights" id="fight" oninput="document.getElementById('selected_fight').value=this.value;">
+      </label>
+      <datalist id="fights">
+        <option value="Conor McGregor vs. Jose Aldo">
+        <option value="Luke Rockhold vs. Chris Weidman">
+        <option value="Yoel Romero vs. Jacare Souza">
+      </datalist>
+      <input id="selected_fight" size="35" draggable="true" ondragstart="drag(event)">
+    </div>
+    <div class='bet_portfolio'>
+      <h2>Fight Portfolio</h2>
+      <div class="bet" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    multiplyNode(document.querySelector('.bet'), 5, true);
+  </script>
 </html>
