@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS mma_betting_db.fights (
   event_date DATE NOT NULL,
   athlete1_id INT UNSIGNED NOT NULL,
   athlete2_id INT UNSIGNED NOT NULL,
+  athlete1_result VARCHAR(64),
+  athlete2_result VARCHAR(64),
 
   FOREIGN KEY (athlete1_id) REFERENCES athletes(id),
   FOREIGN KEY (athlete2_id) REFERENCES athletes(id)
