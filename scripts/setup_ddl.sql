@@ -5,18 +5,20 @@ CREATE DATABASE IF NOT EXISTS mma_betting_db;
 CREATE TABLE IF NOT EXISTS mma_betting_db.organizations (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(256) NOT NULL,
-  description TEXT NOT NULL
+  description TEXT NOT NULL,
+  UNIQUE (name(200))
 );
 
 -- Create events table
 CREATE TABLE IF NOT EXISTS mma_betting_db.events (
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
   name VARCHAR(256) NOT NULL,
   event_date VARCHAR(256) NOT NULL,
   location VARCHAR(256) NOT NULL,
   org_id INT UNSIGNED NOT NULL,
+  CONSTRAINT uc_key UNIQUE (name(200), org_id),
 
-  FOREIGN KEY (org_id) REFERENCES organizations(id),
+  FOREIGN KEY (org_id) REFERENCES organizations(id)
 );
 
 -- Create athletes table
@@ -37,7 +39,8 @@ CREATE TABLE IF NOT EXISTS mma_betting_db.athletes (
   losses INT UNSIGNED NOT NULL,
   losses_ko_tko INT UNSIGNED NOT NULL,
   losses_sub INT UNSIGNED NOT NULL,
-  losses_dec INT UNSIGNED NOT NULL
+  losses_dec INT UNSIGNED NOT NULL,
+  CONSTRAINT uc_key UNIQUE (fullname(200), nickname(200), birth_date)
 );
 
 -- Create fights table
@@ -52,8 +55,9 @@ CREATE TABLE IF NOT EXISTS mma_betting_db.fights (
   end_round_time TIME NOT NULL,
   method VARCHAR(256) NOT NULL,
   referee VARCHAR(256) NOT NULL,
+  CONSTRAINT uc_key UNIQUE (event_id, athlete1_id, athlete2_id),
 
   FOREIGN KEY (event_id) REFERENCES events(id),
   FOREIGN KEY (athlete1_id) REFERENCES athletes(id),
-  FOREIGN KEY (athlete2_id) REFERENCES athletes(id)
+  FOREIGN KEY (athlete2_id) REFERENCES athletes(id),
 );
