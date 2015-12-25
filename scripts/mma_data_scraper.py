@@ -33,71 +33,82 @@ class SherdogScraper(object):
         """
         Scrape data for a particular MMA organization
         """
+        # pull organization HTML data
         org_url = '{}/organizations/{}'.format(self.url, org)
         f = urllib2.urlopen(org_url)
-
         soup = BeautifulSoup(f, 'html.parser')
-        events = soup.findAll('tr', {'itemtype': 'http://schema.org/Event'})
+
+        org_name = soup.find('h2', {'itemprop': 'name'}).string
+        description = soup.find('div', {'itemprop': 'description'}).string.strip()
+        # Add org data to MySQL
+        import code; code.interact(local=locals())
 
         # Pull data for organization's events
+        events = soup.findAll('tr', {'itemtype': 'http://schema.org/Event'})
         for event in events[10:15]:
             event_href = event.a['href']
             self.get_event_data(event_href)
-
-        # Add org data to MySQL
 
     def get_event_data(self, event_href):
         """
         Scrape data for a particular MMA event
         """
+        # pull event HTML data
         event_url = '{}{}'.format(self.url, event_href)
         f = urllib2.urlopen(event_url)
-
         soup = BeautifulSoup(f, 'html.parser')
+
+        event_name = soup.find('span', {'itemprop': 'name'}).string
+        date = soup.find('meta', {'itemprop': 'startDate'})['content']
+        location = soup.find('span', {'itemprop': 'location'}).string
+        # Add event data to MySQL
+
+        # Pull data for events's fights
         fights = soup.findAll(['section', 'tr'], {'itemtype': 'http://schema.org/Event'})
-
         for fight in fights:
-            # get athletes (Tag can vary based on main event vs non-main fight)
-            athletes = fight.findAll('div', {'itemtype': 'http://schema.org/Person'})
-            if not athletes:
-                athletes = fight.findAll('td', {'itemtype': 'http://schema.org/Person'})
+            self.get_fight_data(fight)
 
-            athlete1 = athletes[0]
-            athlete2 = athletes[1]
+    def get_fight_data(self, fight_data):
+        # get athletes (Tag can vary based on main event vs non-main fight)
+        athletes = fight_data.findAll('div', {'itemtype': 'http://schema.org/Person'})
+        if not athletes:
+            athletes = fight_data.findAll('td', {'itemtype': 'http://schema.org/Person'})
 
-            # Get get athlete data and last insert IDs
-            id1 = self.get_athlete_data(athlete1.a['href'])
-            id2 = self.get_athlete_data(athlete2.a['href'])
+        athlete1 = athletes[0]
+        athlete2 = athletes[1]
 
-            # Get fight data
-            result1 = athlete1.find('span', {'class': 'final_result'}).string
-            result2 = athlete2.find('span', {'class': 'final_result'}).string
+        # Get get athlete data and last insert IDs
+        id1 = self.get_athlete_data(athlete1.a['href'])
+        id2 = self.get_athlete_data(athlete2.a['href'])
 
-            resume = fight.find('table', {'class': 'resume'})
-            if resume:
-                fight_attrs = resume.findAll('td')
-                fight_attrs = dict([(x.em.string, x.contents[-1].strip()) for x in fight_attrs])
-                end_round = fight_attrs['Round']
-                end_round_time = fight_attrs['Time']
-                method = fight_attrs['Method']
-                referee = fight_attrs['Referee']
-            else:
-                table_data = fight.findAll('td')
-                end_round = table_data[-2].string
-                end_round_time = table_data[-1].string
-                method = table_data[-3].contents[0]
-                referee = table_data[-3].span.string
-                import code; code.interact(local=locals())
+        # Get fight data
+        result1 = athlete1.find('span', {'class': 'final_result'}).string
+        result2 = athlete2.find('span', {'class': 'final_result'}).string
 
-            # Add fight data to MySQL
+        resume = fight_data.find('table', {'class': 'resume'})
+        if resume:
+            fight_attrs = resume.findAll('td')
+            fight_attrs = dict([(x.em.string, x.contents[-1].strip()) for x in fight_attrs])
+            end_round = fight_attrs['Round']
+            end_round_time = fight_attrs['Time']
+            method = fight_attrs['Method']
+            referee = fight_attrs['Referee']
+        else:
+            table_data = fight_data.findAll('td')
+            end_round = table_data[-2].string
+            end_round_time = table_data[-1].string
+            method = table_data[-3].contents[0]
+            referee = table_data[-3].span.string
+
+        # Add fight data to MySQL
 
     def get_athlete_data(self, athlete_href):
         """
         Scrape data for a particular MMA athlete
         """
+        # pull athlete HTML data
         athlete_url = '{}{}'.format(self.url, athlete_href)
         f = urllib2.urlopen(athlete_url)
-
         soup = BeautifulSoup(f, 'html.parser')
 
         # Parse name data
