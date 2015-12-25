@@ -23,37 +23,75 @@ class SherdogScraper(object):
         self.url = 'http://www.sherdog.com'
 
     def _get_mysql_conn(self):
-        return MySQLdb.connect(host=self.db_host,
-                               port=3306,
-                               user=self.db_user,
-                               db=self.database,
-                               passwd=self.password)
+        if self.password:
+            return MySQLdb.connect(host=self.db_host,
+                                   port=3306,
+                                   user=self.db_user,
+                                   db=self.database,
+                                   passwd=self.password)
+        else:
+            return MySQLdb.connect(host=self.db_host,
+                                   port=3306,
+                                   user=self.db_user,
+                                   db=self.database)
+
+    def _insert_data(self, table, fields, values):
+        """
+        INSERT values into specified MySQL table
+        """
+        # Build SQL INSERT statement string
+        sql = 'INSERT INTO `{0}`.`{1}` '.format(self.database, table)
+        sql += '('
+        for field in fields:
+            sql += '{0},'.format(field)
+        sql = sql[:-1] + ') VALUES ('
+        for val in values:
+            val_str = "'{0}',".format(val) if val else 'NULL,'
+            sql += val_str
+        sql = sql[:-1] + ")"
+
+        # Run insert statement
+        with self._get_mysql_conn() as cur:
+            try:
+                cur.execute(sql)
+                # Return last insert ID for creating potential foreign keys
+                cur.execute("SELECT LAST_INSERT_ID()")
+                return cur.fetchone()[0]
+            except Exception as e:
+                print "FAILED loading data into MySQL: {0}".format(str(e))
+                print sql + "\n"
+                return None
 
     def get_org_data(self, org):
         """
         Scrape data for a particular MMA organization
         """
         # pull organization HTML data
+        print 'Getting org data for: {0}'.format(org)
         org_url = '{}/organizations/{}'.format(self.url, org)
         f = urllib2.urlopen(org_url)
         soup = BeautifulSoup(f, 'html.parser')
 
         org_name = soup.find('h2', {'itemprop': 'name'}).string
         description = soup.find('div', {'itemprop': 'description'}).string.strip()
+
         # Add org data to MySQL
-        import code; code.interact(local=locals())
+        org_fields = ['name', 'description']
+        org_vals = [org_name, description]
+        org_id = self._insert_data('organizations', org_fields, org_vals)
 
         # Pull data for organization's events
         events = soup.findAll('tr', {'itemtype': 'http://schema.org/Event'})
-        for event in events[10:15]:
+        for event in events[10:13]:
             event_href = event.a['href']
-            self.get_event_data(event_href)
+            self.get_event_data(event_href, org_id)
 
-    def get_event_data(self, event_href):
+    def get_event_data(self, event_href, org_id):
         """
         Scrape data for a particular MMA event
         """
         # pull event HTML data
+        print '  Getting event data for: {0}'.format(event_href)
         event_url = '{}{}'.format(self.url, event_href)
         f = urllib2.urlopen(event_url)
         soup = BeautifulSoup(f, 'html.parser')
@@ -61,14 +99,21 @@ class SherdogScraper(object):
         event_name = soup.find('span', {'itemprop': 'name'}).string
         date = soup.find('meta', {'itemprop': 'startDate'})['content']
         location = soup.find('span', {'itemprop': 'location'}).string
-        # Add event data to MySQL
+
+        event_fields = ['name', 'event_date', 'location', 'org_id']
+        event_vals = [event_name, date, location, org_id]
+        event_id = self._insert_data('events', event_fields, event_vals)
 
         # Pull data for events's fights
         fights = soup.findAll(['section', 'tr'], {'itemtype': 'http://schema.org/Event'})
         for fight in fights:
-            self.get_fight_data(fight)
+            self.get_fight_data(fight, event_id)
 
-    def get_fight_data(self, fight_data):
+    def get_fight_data(self, fight_data, event_id):
+        """
+        Parse fight data
+        """
+        print '    Getting fight data'
         # get athletes (Tag can vary based on main event vs non-main fight)
         athletes = fight_data.findAll('div', {'itemtype': 'http://schema.org/Person'})
         if not athletes:
@@ -101,12 +146,17 @@ class SherdogScraper(object):
             referee = table_data[-3].span.string
 
         # Add fight data to MySQL
+        fight_fields = ['event_id', 'athlete1_id', 'athlete2_id', 'athlete1_result',
+                        'athlete2_result', 'end_round', 'end_round_time', 'method', 'referee']
+        fight_vals = [event_id, id1, id2, result1, result2, end_round, end_round_time, method, referee]
+        self._insert_data('fights', fight_fields, fight_vals)
 
     def get_athlete_data(self, athlete_href):
         """
         Scrape data for a particular MMA athlete
         """
         # pull athlete HTML data
+        print '      Getting athlete data for: {0}'.format(athlete_href)
         athlete_url = '{}{}'.format(self.url, athlete_href)
         f = urllib2.urlopen(athlete_url)
         soup = BeautifulSoup(f, 'html.parser')
@@ -115,7 +165,7 @@ class SherdogScraper(object):
         full_name = soup.find('span', {'class': 'fn'}).string
         nick_name = soup.find('span', {'class': 'nickname'})
         if nick_name:
-            nick_name = nick_name.find('em').string
+            nick_name = nick_name.find('em').string.replace("'", "\\'")
 
         athlete_data = soup.find('div', {'class': 'data'})
 
@@ -161,47 +211,20 @@ class SherdogScraper(object):
         losses_dec = losses_breakdown['DECISIONS']
 
         # Add athlete data to MySQL
-
-    def insert_data(self):
-        self.csvfile.seek(0)
-        self.csvreader = csv.reader(self.csvfile, self.dialect)
-        self.csvreader.next()
-
-        batch_size = 5000
-        sql = "INSERT INTO `{0}`.`{1}` VALUES ".format(self.database, self.table)
-        i = 0
-        while True:
-            row = next(self.csvreader, None)
-
-            if (i % batch_size == 0 and i > 0) or row is None:
-                sql = sql[:-1] + ";"
-                with self._get_mysql_conn() as cur:
-                    try:
-                        cur.execute(sql)
-                    except Exception as e:
-                        print "FAILED loading data into MySQL with: {0}".format(str(e))
-                        print sql + "\n\n"
-
-                sql = "INSERT INTO `{0}`.`{1}` VALUES ".format(self.database, self.table)
-                print "inserted {0} rows in {1}.{2}".format(i, self.database, self.table)
-                if row is None:
-                    break
-
-            # Build INSERT statement
-            sql += '('
-            for col in row:
-                col_str = 'NULL,' if col == '' else "'{0}',".format(col.replace('"', '\"').replace("'", "\\'"))
-                sql += col_str
-            sql = sql[:-1] + "),"
-
-            i += 1
+        athlete_fields = ['fullname', 'nickname', 'birth_date', 'birth_locality', 'nationality',
+                          'height_cm', 'weight_kg', 'weight_class', 'wins', 'wins_ko_tko', 'wins_sub',
+                          'wins_dec', 'losses', 'losses_ko_tko', 'losses_sub', 'losses_dec']
+        athlete_vals = [full_name, nick_name, birth_date, birth_locality, nationality,
+                        height, weight, weight_class, wins, wins_ko_tko, wins_sub,
+                        wins_dec, losses, losses_ko_tko, losses_sub, losses_dec]
+        return self._insert_data('athletes', athlete_fields, athlete_vals)
 
 
 def args():
     parser = argparse.ArgumentParser(description='Scrape data from Sherdog and store in MySQL database.')
     parser.add_argument('--database', help='MySQL database', type=str, default='mma_betting_db')
     parser.add_argument('--db-host', help='DB host', type=str, default='localhost')
-    parser.add_argument('--db-user', help='DB user', type=str, default='user')
+    parser.add_argument('--db-user', help='DB user', type=str, default=getpass.getuser())
     parser.add_argument('--get-pw', help='whether to enter DB password', type=bool, default=False)
     return parser.parse_args()
 
