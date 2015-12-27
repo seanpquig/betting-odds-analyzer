@@ -8,11 +8,12 @@ scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
   jdbc,
-  "mysql" % "mysql-connector-java" % "5.1.34",
   evolutions,
   cache,
   ws,
-  specs2 % Test
+  specs2 % Test,
+  "mysql" % "mysql-connector-java" % "5.1.34",
+  "com.typesafe.play" %% "anorm" % "2.4.0"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
