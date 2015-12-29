@@ -9,9 +9,9 @@ import play.api.Play.current
 
 class Application extends Controller {
 
-  def getFights() = {
+  def getFights = {
     DB.withConnection { implicit c =>
-      val parser = str(1) ~ str(2) map(flatten)
+      val parser = str(1) ~ str(2) map flatten
       SQL(
         """
           SELECT
@@ -26,7 +26,7 @@ class Application extends Controller {
   }
 
   def index = Action {
-    val fightStrings = getFights().map {
+    val fightStrings = getFights.map {
       case (a1: String, a2: String) => s"$a1 vs. $a2"
     }
     Ok(views.html.index(fightStrings))
