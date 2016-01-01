@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS fights (
   athlete1_result VARCHAR(256) NOT NULL,
   athlete2_result VARCHAR(256) NOT NULL,
   end_round INT UNSIGNED NOT NULL,
-  end_round_time TIME NOT NULL,
+  end_round_time VARCHAR(256) NOT NULL,
   method VARCHAR(256) NOT NULL,
   referee VARCHAR(256) NOT NULL,
   CONSTRAINT uc_key UNIQUE (event_id, athlete1_id, athlete2_id),

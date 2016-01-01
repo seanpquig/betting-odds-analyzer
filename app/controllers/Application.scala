@@ -60,7 +60,7 @@ class Application extends Controller {
         str("athlete1_result") ~
         str("athlete2_result") ~
         int("end_round") ~
-        date("end_round_time") ~
+        str("end_round_time") ~
         str("method") ~
         str("referee") map flatten
       val sqlResult = SQL(s"SELECT * FROM fights WHERE event_id=$eventId").as(parser.*)
