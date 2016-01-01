@@ -63,7 +63,7 @@ class Application extends Controller {
         date("end_round_time") ~
         str("method") ~
         str("referee") map flatten
-      val sqlResult = SQL("SELECT * FROM fights").as(parser.*)
+      val sqlResult = SQL(s"SELECT * FROM fights WHERE event_id=$eventId").as(parser.*)
       val jsonObjects = sqlResult.map { org =>
         Json.obj(
           "id" -> org._1,
