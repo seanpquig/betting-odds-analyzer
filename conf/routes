@@ -4,10 +4,10 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /organizations              controllers.Application.getOrganizations
-GET     /events/:orgId              controllers.Application.getEvents(orgId: Int)
-GET     /fights/:eventId            controllers.Application.getFights(eventId: Int)
-GET     /athletes/:id               controllers.Application.getAthlete(id: Int)
+GET     /organizations              controllers.StatsDatabase.getOrganizations
+GET     /events/:orgId              controllers.StatsDatabase.getEvents(orgId: Int)
+GET     /fights/:eventId            controllers.StatsDatabase.getFights(eventId: Int)
+GET     /athletes/:id               controllers.StatsDatabase.getAthlete(id: Int)
 
 # JS ROUTES
 GET     /public/javascript/routes          controllers.Application.javascriptRoutes()
