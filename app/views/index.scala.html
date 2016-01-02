@@ -5,6 +5,11 @@
   <div class='fight_selector'>
     <h2>Fight Selector</h2>
     <label>
+      Select an event<br>
+      <input list="events" id="event">
+    </label>
+    <datalist id="events"></datalist>
+    <label>
       Select a fight<br>
       <input list="fights" id="fight" oninput="document.getElementById('selected_fight').value=this.value;">
     </label>
@@ -19,8 +24,5 @@
     <h2>Fight Portfolio</h2>
     <div class="bet" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
   </div>
-  <script>
-    multiplyNode(document.querySelector('.bet'), 5, true);
-  </script>
 
 }

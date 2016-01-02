@@ -28,7 +28,7 @@ class StatsDatabase extends Controller {
 
   def getEvents(orgId: Int) = Action {
     DB.withConnection { implicit c =>
-      val parser = int("id") ~ str("name") ~ str("event_date") ~ str("location") ~ int("org_id") map flatten
+      val parser = int("id") ~ str("name") ~ date("event_date") ~ str("location") ~ int("org_id") map flatten
       val sqlResult = SQL(s"SELECT * FROM events WHERE org_id=$orgId").as(parser.*)
       val jsonObjects = sqlResult.map { org =>
         Json.obj(

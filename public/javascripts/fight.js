@@ -24,3 +24,4 @@ function multiplyNode(node, count, deep) {
         node.parentNode.insertBefore(copy, node);
     }
 }
+multiplyNode(document.querySelector('.bet'), 5, true);
