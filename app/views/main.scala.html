@@ -10,26 +10,8 @@
   </head>
   <body>
     @content
-    <script src="@routes.Assets.versioned("javascripts/fight.js")"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
-    <script>
-        $(document).ready(function() {
-            var getOrgCall = jsRoutes.controllers.StatsDatabase.getEvents(1);
-            $.getJSON(
-                getOrgCall.url,
-                function(data, textStatus, xhr) {
-                    if(textStatus == "success") {
-                        $.each(data, function(index, value) {
-                            $("#events").append("<option value='" + value["name"] + "'></option>");
-                        });
-                    }
-                    if(textStatus == "error") {
-                        alert("Error: " + xhr.status + ": " + xhr.statusText);
-                    }
-                }
-            );
-        });
-    </script>
+    <script src="@routes.Assets.versioned("javascripts/fight.js")"></script>
   </body>
 </html>

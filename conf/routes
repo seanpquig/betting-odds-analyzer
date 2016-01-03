@@ -7,6 +7,7 @@ GET     /                           controllers.Application.index
 GET     /organizations              controllers.StatsDatabase.getOrganizations
 GET     /events/:orgId              controllers.StatsDatabase.getEvents(orgId: Int)
 GET     /fights/:eventId            controllers.StatsDatabase.getFights(eventId: Int)
+GET     /athlete_names/:fightId     controllers.StatsDatabase.getAthleteNames(fightId: Int)
 GET     /athletes/:id               controllers.StatsDatabase.getAthlete(id: Int)
 
 # JS ROUTES

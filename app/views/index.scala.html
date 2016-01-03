@@ -1,4 +1,4 @@
-@(fights: List[String])
+@()
 
 @main("Analyze your bets") {
 
@@ -6,18 +6,14 @@
     <h2>Fight Selector</h2>
     <label>
       Select an event<br>
-      <input list="events" id="event">
+      <input id="event" list="events" oninput="populateFights(this.value)">
     </label>
     <datalist id="events"></datalist>
     <label>
       Select a fight<br>
-      <input list="fights" id="fight" oninput="document.getElementById('selected_fight').value=this.value;">
+      <input id="fight" list="fights" oninput="document.getElementById('selected_fight').value=this.value;">
     </label>
-    <datalist id="fights">
-      @for(fight <- fights) {
-        <option value="@fight"></option>
-      }
-    </datalist>
+    <datalist id="fights"></datalist>
     <input id="selected_fight" size="35" draggable="true" ondragstart="drag(event)">
   </div>
   <div class='bet_portfolio'>
