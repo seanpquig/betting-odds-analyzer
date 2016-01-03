@@ -111,7 +111,45 @@ function createFightOption(fightId, athlete1Id, athlete2Id) {
     Set fighter stats upon fight selection
 ****************************************************/
 function populateAthleteStats(fightName) {
-    athlete1Id = fightToAthleteData[fightName]["athlete1_id"];
-    athlete2Id = fightToAthleteData[fightName]["athlete2_id"];
-    console.log("ids: " + athlete1Id + " " + athlete2Id);
+    console.log("in populateAthleteStats");
+
+    // Get athlete 1 data
+    var athlete1Id = fightToAthleteData[fightName]["athlete1_id"];
+    var getAthleteCall1 = jsRoutes.controllers.StatsDatabase.getAthlete(athlete1Id);
+    $.getJSON(
+        getAthleteCall1.url,
+        function(data, textStatus, xhr) {
+            if(textStatus == "success") {
+                // Set spans in athlete1_stats div
+                $("#athlete1_stats span.fullname").text(data['fullname']);
+                var record = data['wins'] + "-" + data['losses'];
+                $("#athlete1_stats span.record").text(record);
+                $("#athlete1_stats span.weight").text(data['weight_kg'] + "kg");
+                $("#athlete1_stats span.height").text(data['height_cm'] + "cm");
+            }
+            if(textStatus == "error") {
+                alert("Error for getFights: " + xhr.status + ": " + xhr.statusText);
+            }
+        }
+    );
+
+    // Get athlete 2 data
+    var athlete2Id = fightToAthleteData[fightName]["athlete2_id"];
+    var getAthleteCall2 = jsRoutes.controllers.StatsDatabase.getAthlete(athlete2Id);
+    $.getJSON(
+        getAthleteCall2.url,
+        function(data, textStatus, xhr) {
+            if(textStatus == "success") {
+                // Set spans in athlete2_stats div
+                $("#athlete2_stats span.fullname").text(data['fullname']);
+                var record = data['wins'] + "-" + data['losses'];
+                $("#athlete2_stats span.record").text(record);
+                $("#athlete2_stats span.weight").text(data['weight_kg'] + "kg");
+                $("#athlete2_stats span.height").text(data['height_cm'] + "cm");
+            }
+            if(textStatus == "error") {
+                alert("Error for getFights: " + xhr.status + ": " + xhr.statusText);
+            }
+        }
+    );
 }

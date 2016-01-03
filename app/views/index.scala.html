@@ -14,12 +14,19 @@
       <input id="fight" list="fights" oninput="populateAthleteStats(this.value);">
     </label>
     <datalist id="fights"></datalist>
-    <input id="selected_fight" size="35" draggable="true" ondragstart="drag(event)">
-    <div id='athlete1_stats' class='athlete_stats' float="left">
-      <h2>Athlete1</h2>
-    </div>
-    <div id='athlete2_stats' class='athlete_stats'>
-      <h2>Athlete2</h2>
+    <div id='athlete_stats_div'>
+      <div id='athlete1_stats' class='athlete_stats' float="left">
+        <span class="fullname"></span><br>
+        <span class="record"></span><br>
+        <span class="weight"></span><br>
+        <span class="height"></span>
+      </div>
+      <div id='athlete2_stats' class='athlete_stats'>
+        <span class="fullname"></span><br>
+        <span class="record"></span><br>
+        <span class="weight"></span><br>
+        <span class="height"></span>
+      </div>
     </div>
   </div>
   <div class='bet_portfolio'>

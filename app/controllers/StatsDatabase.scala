@@ -89,13 +89,13 @@ class StatsDatabase extends Controller {
           WHERE fights.id = $fightId
         """
       ).as(parser.*)
-      val athletesJson = sqlResult.map { fight =>
+      val jsonObjects = sqlResult.map { fight =>
         Json.obj(
           "athlete1" -> fight._1,
           "athlete2" -> fight._2
         )
       }
-      Ok(Json.toJson(athletesJson(0)))
+      Ok(jsonObjects(0))
     }
   }
 
@@ -104,9 +104,9 @@ class StatsDatabase extends Controller {
       val parser =
         int("id") ~
         str("fullname") ~
-        str("nickname") ~
+        get[Option[String]]("nickname") ~
         date("birth_date") ~
-        str("birth_locality") ~
+        get[Option[String]]("birth_locality") ~
         str("nationality") ~
         double("height_cm") ~
         double("weight_kg") ~
@@ -141,7 +141,7 @@ class StatsDatabase extends Controller {
           "losses_dec" -> athlete._17
         )
       }
-      Ok(Json.toJson(jsonObjects))
+      Ok(jsonObjects(0))
     }
   }
 
