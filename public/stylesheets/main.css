@@ -1,5 +1,7 @@
 body {
-    background-color: cadetblue;
+    /*background-color: cadetblue;*/
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 label, input {
@@ -10,39 +12,79 @@ label {
     margin-bottom: 10px;
 }
 
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+.active {
+    background-color: #4CAF50;
+}
+
 .fight_selector {
-    background-color: grey;
+    background-color: #888888;
     float: left;
     margin: 5px;
+    margin-top: 55px;
     padding: 15px;
     padding-top: 0;
-    width: 270px;
-    height: 300px;
     border: 3px groove grey;
+    border-radius: 3px;
     box-sizing: border-box;
+}
+
+.fight_selector label {
+    margin-top: 10px;
 }
 
 .athlete_stats {
     float: left;
-    width: 90px;
-    margin: 10px;
-    border: 3px groove grey;
-}
-
-.bet_portfolio {
-    background-color: grey;
-    float: left;
-    margin: 5px;
-    padding: 15px;
-    padding-top: 0px;
-    width: 350px;
-    height: 350px;
+    width: 170px;
+    margin-top: 10px;
+    margin-right: 5px;
+    padding: 3px;
+    color: white;
+    background-color: #333;
     border: 3px groove grey;
     box-sizing: border-box;
 }
 
+.bet_portfolio {
+    background-color: #888888;
+    float: left;
+    margin: 5px;
+    margin-top: 55px;
+    padding: 15px;
+    padding-top: 0px;
+    border: 3px groove grey;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
 .bet {
-    background-color: cadetblue;
+    background-color: #333;
     margin: 5px;
     padding: 10px;
     width: 220px;

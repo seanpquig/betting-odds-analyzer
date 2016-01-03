@@ -2,30 +2,38 @@
 
 @main("Analyze your bets") {
 
+  <ul>
+    <li><a class="active" href="#home">Home</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
   <div class='fight_selector'>
-    <h2>Fight Selector</h2>
     <label>
       Select an event<br>
-      <input id="event" list="events" oninput="populateFights(this.value)" size=35>
+      <input id="event" list="events" oninput="populateFights(this.value)" size=50>
     </label>
     <datalist id="events"></datalist>
     <label>
       Select a fight<br>
-      <input id="fight" list="fights" oninput="populateAthleteStats(this.value);">
+      <input id="fight" list="fights" oninput="populateAthleteStats(this.value);" size=40>
     </label>
     <datalist id="fights"></datalist>
     <div id='athlete_stats_div'>
       <div id='athlete1_stats' class='athlete_stats' float="left">
-        <span class="fullname"></span><br>
-        <span class="record"></span><br>
-        <span class="weight"></span><br>
-        <span class="height"></span>
+        <div class='athlete_stats_inner_div'>
+          <span class="fullname"></span><br>
+          <span class="record"></span><br>
+          <span class="weight"></span><br>
+          <span class="height"></span>
+        </div>
       </div>
       <div id='athlete2_stats' class='athlete_stats'>
-        <span class="fullname"></span><br>
-        <span class="record"></span><br>
-        <span class="weight"></span><br>
-        <span class="height"></span>
+        <div class='athlete_stats_inner_div'>
+          <span class="fullname"></span><br>
+          <span class="record"></span><br>
+          <span class="weight"></span><br>
+          <span class="height"></span>
+        </div>
       </div>
     </div>
   </div>
