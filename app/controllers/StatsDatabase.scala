@@ -101,15 +101,47 @@ class StatsDatabase extends Controller {
 
   def getAthlete(id: Int) = Action {
     DB.withConnection { implicit c =>
-      val parser = int("id") ~ str("fullname") map flatten
+      val parser =
+        int("id") ~
+        str("fullname") ~
+        str("nickname") ~
+        date("birth_date") ~
+        str("birth_locality") ~
+        str("nationality") ~
+        double("height_cm") ~
+        double("weight_kg") ~
+        str("weight_class") ~
+        int("wins") ~
+        int("wins_ko_tko") ~
+        int("wins_sub") ~
+        int("wins_dec") ~
+        int("losses") ~
+        int("losses_ko_tko") ~
+        int("losses_sub") ~
+        int("losses_dec") map flatten
       val sqlResult = SQL(s"SELECT * FROM athletes WHERE id = $id").as(parser.*)
       val jsonObjects = sqlResult.map { athlete =>
         Json.obj(
           "id" -> athlete._1,
-          "fullname" -> athlete._2
+          "fullname" -> athlete._2,
+          "nickname" -> athlete._3,
+          "birth_date" -> athlete._4,
+          "birth_locality" -> athlete._5,
+          "nationality" -> athlete._6,
+          "height_cm" -> athlete._7,
+          "weight_kg" -> athlete._8,
+          "weight_class" -> athlete._9,
+          "wins" -> athlete._10,
+          "wins_ko_tko" -> athlete._11,
+          "wins_sub" -> athlete._12,
+          "wins_dec" -> athlete._13,
+          "losses" -> athlete._14,
+          "losses_ko_tko" -> athlete._15,
+          "losses_sub" -> athlete._16,
+          "losses_dec" -> athlete._17
         )
       }
-      Ok(Json.obj())
+      Ok(Json.toJson(jsonObjects))
     }
   }
 
