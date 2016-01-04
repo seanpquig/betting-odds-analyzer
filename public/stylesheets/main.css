@@ -60,7 +60,6 @@ li a:hover:not(.active) {
 }
 
 .athlete_stats {
-    float: left;
     width: 170px;
     margin-top: 10px;
     margin-right: 5px;

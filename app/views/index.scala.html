@@ -18,24 +18,33 @@
       <input id="fight" list="fights" oninput="populateAthleteStats(this.value);" size=40>
     </label>
     <datalist id="fights"></datalist>
-    <div id='athlete_stats_div'>
-      <div id='athlete1_stats' class='athlete_stats' float="left">
-        <div class='athlete_stats_inner_div'>
-          <span class="fullname"></span><br>
-          <span class="record"></span><br>
-          <span class="weight"></span><br>
-          <span class="height"></span>
-        </div>
-      </div>
-      <div id='athlete2_stats' class='athlete_stats'>
-        <div class='athlete_stats_inner_div'>
-          <span class="fullname"></span><br>
-          <span class="record"></span><br>
-          <span class="weight"></span><br>
-          <span class="height"></span>
-        </div>
-      </div>
-    </div>
+      <table>
+        <tr>
+          <td>
+            <div id='athlete1_stats' class='athlete_stats' float="left">
+              <div class='athlete_stats_inner_div'>
+                <span class="fullname"></span><br>
+                <span class="record"></span><br>
+                <span class="weight"></span><br>
+                <span class="height"></span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div calss='vs'>Vs.</div>
+          </td>
+          <td>
+            <div id='athlete2_stats' class='athlete_stats'>
+              <div class='athlete_stats_inner_div'>
+                <span class="fullname"></span><br>
+                <span class="record"></span><br>
+                <span class="weight"></span><br>
+                <span class="height"></span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
   </div>
   <div class='bet_portfolio'>
     <h2>Fight Portfolio</h2>
