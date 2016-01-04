@@ -1,5 +1,4 @@
 body {
-    /*background-color: cadetblue;*/
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -40,7 +39,7 @@ li a:hover:not(.active) {
 }
 
 .active {
-    background-color: #4CAF50;
+    background-color: #00b7e6;
 }
 
 .fight_selector {
