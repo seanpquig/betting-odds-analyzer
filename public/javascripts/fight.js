@@ -13,10 +13,16 @@ function drag(ev) {
 }
 function drop(ev) {
     ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    var nodeCopy = document.getElementById(data).cloneNode(true);
-    nodeCopy.id = "newId";
-    ev.target.appendChild(nodeCopy);
+    var data1 = ev.dataTransfer.getData("text");
+    var types = ev.dataTransfer.types;
+    // var x = $(ev).data('id');
+    var athleteName1 = document.getElementById(data1).childNodes[1].childNodes[1].childNodes[0].childNodes[1].childNodes[1].childNodes[1].childNodes[1].textContent;
+    
+    var athleteNode = document.createTextNode(athleteName1);
+    ev.target.appendChild(athleteNode);
+
+    // Clear the drag data cache (for all formats/types)
+    ev.dataTransfer.clearData();
 }
 
 // Function for duplicating nodes
@@ -111,7 +117,6 @@ function createFightOption(fightId, athlete1Id, athlete2Id) {
     Set fighter stats upon fight selection
 ****************************************************/
 function populateAthleteStats(fightName) {
-    console.log("in populateAthleteStats");
 
     // Get athlete 1 data
     var athlete1Id = fightToAthleteData[fightName]["athlete1_id"];

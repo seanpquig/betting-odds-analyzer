@@ -58,10 +58,14 @@ li a:hover:not(.active) {
     margin-top: 10px;
 }
 
+.selected_fight {
+    margin-top: 20px;
+    background-color: #606060;
+    border-radius: 3px;
+}
+
 .athlete_stats {
     width: 170px;
-    margin-top: 10px;
-    margin-right: 5px;
     padding: 3px;
     color: white;
     background-color: #333;
