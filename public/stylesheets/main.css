@@ -65,7 +65,8 @@ li a:hover:not(.active) {
 }
 
 .athlete_stats {
-    width: 170px;
+    min-width: 170px;
+    min-height: 90px;
     padding: 3px;
     color: white;
     background-color: #333;
@@ -86,10 +87,11 @@ li a:hover:not(.active) {
 }
 
 .bet {
+    color: white;
     background-color: #333;
     margin: 5px;
     padding: 10px;
-    width: 220px;
+    min-width: 300px;
     height: 40px;
     border: 1px groove grey;
     box-sizing: border-box;

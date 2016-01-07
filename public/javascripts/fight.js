@@ -13,12 +13,17 @@ function drag(ev) {
 }
 function drop(ev) {
     ev.preventDefault();
-    var data1 = ev.dataTransfer.getData("text");
-    var types = ev.dataTransfer.types;
-    // var x = $(ev).data('id');
-    var athleteName1 = document.getElementById(data1).childNodes[1].childNodes[1].childNodes[0].childNodes[1].childNodes[1].childNodes[1].childNodes[1].textContent;
+
+    var dragElementName = ev.dataTransfer.getData("text");
+    var athlete1 = $("." + dragElementName).find("#athlete1_stats");
+    var athlete2 = $("." + dragElementName).find("#athlete2_stats");
+
+    // Get athlete names
+    var athleteName1 = athlete1.find(".fullname")[0].innerText;
+    var athleteName2 = athlete2.find(".fullname")[0].innerText;
     
-    var athleteNode = document.createTextNode(athleteName1);
+    // Populate data for a give bet this is being dropped on
+    var athleteNode = document.createTextNode(athleteName1 + " vs. " + athleteName2);
     ev.target.appendChild(athleteNode);
 
     // Clear the drag data cache (for all formats/types)
