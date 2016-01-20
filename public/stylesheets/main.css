@@ -1,45 +1,9 @@
 body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 label, input {
     display: block;
-}
-
-label {
-    margin-bottom: 10px;
-}
-
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
-    position: fixed;
-    top: 0;
-    width: 100%;
-}
-
-li {
-    float: left;
-}
-
-li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-li a:hover:not(.active) {
-    background-color: #111;
-}
-
-.active {
-    background-color: #00b7e6;
 }
 
 .fight_selector {
@@ -70,7 +34,7 @@ li a:hover:not(.active) {
     padding: 3px;
     color: white;
     background-color: #333;
-    border: 3px groove grey;
+    border: 3px groove #00b7e6;
     box-sizing: border-box;
 }
 
@@ -93,6 +57,6 @@ li a:hover:not(.active) {
     padding: 10px;
     min-width: 300px;
     height: 40px;
-    border: 1px groove grey;
+    border: 2px groove #00b7e6;
     box-sizing: border-box;
 }
