@@ -10,7 +10,7 @@ label, input {
     background-color: #888888;
     float: left;
     margin: 5px;
-    margin-top: 55px;
+    margin-top: 60px;
     padding: 15px;
     padding-top: 0;
     border: 3px groove grey;
@@ -26,6 +26,12 @@ label, input {
     margin-top: 20px;
     background-color: #606060;
     border-radius: 3px;
+    padding: 2px;
+}
+
+.vs {
+    padding: 10px;
+    font-size: 20px;
 }
 
 .athlete_stats {
@@ -42,7 +48,7 @@ label, input {
     background-color: #888888;
     float: left;
     margin: 5px;
-    margin-top: 55px;
+    margin-top: 60px;
     padding: 15px;
     padding-top: 0px;
     border: 3px groove grey;
@@ -54,9 +60,9 @@ label, input {
     color: white;
     background-color: #333;
     margin: 5px;
-    padding: 10px;
+    padding: 8px;
     min-width: 300px;
-    height: 40px;
+    height: 53px;
     border: 2px groove #00b7e6;
     box-sizing: border-box;
 }
