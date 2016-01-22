@@ -67,6 +67,37 @@
   </div>
   <div class='bet_portfolio'>
     <h2>Fight Portfolio</h2>
+    <table class="table table-striped table-condensed table-bordered">
+      <thead class="thead-inverse">
+        <tr>
+          <th>Athlete</th>
+          <th>Odds</th>
+          <th>Implied Probability</th>
+          <th>Bet $</th>
+          <th>Win Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>McGoat</td>
+          <td>-100</td>
+          <td>50.8%</td>
+          <td>
+            <input class="form-control" id="exampleInputAmount" type="text" >
+          </td>
+          <td>$2,000</td>
+        </tr>
+        <tr>
+          <td>RDA</td>
+          <td>-140</td>
+          <td>67.8%</td>
+          <td>
+            <input class="form-control" id="inputdefault" type="text">
+          </td>
+          <td>$700</td>
+        </tr>
+      </tbody>
+    </table>
     <div class="bet" ondrop="drop(event)" ondragover="allowDrop(event)">
       <span class="names-bet"></span>
       <button type="button" class="btn btn-info" style="float: right;">Info</button>
