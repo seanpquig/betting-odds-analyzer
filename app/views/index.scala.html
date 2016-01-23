@@ -28,79 +28,87 @@
       </div>
     </div>
   </nav>
-  <div class='fight_selector'>
-    <label>
-      Select an event<br>
-      <input id="event" list="events" oninput="populateFights(this.value)" size=50>
-    </label>
-    <datalist id="events"></datalist>
-    <label>
-      Select a fight<br>
-      <input id="fight" list="fights" oninput="populateAthleteStats(this.value);" size=40>
-    </label>
-    <datalist id="fights"></datalist>
-    <div id='selected_fight' class='selected_fight' draggable="true" ondragstart="drag(event)">
-      <table>
-        <tr>
-          <td>
-            <div id='athlete1_stats' class='athlete_stats' float="left">
-              <span class="fullname"></span><br>
-              <span class="record"></span><br>
-              <span class="weight"></span><br>
-              <span class="height"></span>
-            </div>
-          </td>
-          <td>
-            <div class='vs'>Vs.</div>
-          </td>
-          <td>
-            <div id='athlete2_stats' class='athlete_stats'>
-              <span class="fullname"></span><br>
-              <span class="record"></span><br>
-              <span class="weight"></span><br>
-              <span class="height"></span>
-            </div>
-          </td>
-        </tr>
-      </table>
+  <div class="selector_and_portfolio">
+    <div class='col-md-4 container fight_selector_container'>
+      <div class='fight_selector'>
+        <label>
+          Select an event<br>
+          <input class="form-control" id="event" type="text" list="events" oninput="populateFights(this.value)">
+        </label>
+        <datalist id="events"></datalist>
+        <label>
+          Select a fight<br>
+          <input class="form-control" id="fight" type="text" list="fights" oninput="populateAthleteStats(this.value);">
+        </label>
+        <datalist id="fights"></datalist>
+        <div id='selected_fight' class='selected_fight' draggable="true" ondragstart="drag(event)">
+          <table class="table table-condensed">
+            <tr>
+              <td>
+                <div id='athlete1_stats' class='athlete_stats'>
+                  <span class="fullname"></span><br>
+                  <span class="record"></span><br>
+                  <span class="weight"></span><br>
+                  <span class="height"></span>
+                </div>
+              </td>
+              <td class='vs vert-align' valign="middle">
+                Vs.
+              </td>
+              <td>
+                <div id='athlete2_stats' class='athlete_stats'>
+                  <span class="fullname"></span><br>
+                  <span class="record"></span><br>
+                  <span class="weight"></span><br>
+                  <span class="height"></span>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class='bet_portfolio'>
-    <h2>Fight Portfolio</h2>
-    <table class="table table-striped table-condensed table-bordered">
-      <thead class="thead-inverse">
-        <tr>
-          <th>Athlete</th>
-          <th>Odds</th>
-          <th>Implied Probability</th>
-          <th>Bet $</th>
-          <th>Win Profit</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>McGoat</td>
-          <td>-100</td>
-          <td>50.8%</td>
-          <td>
-            <input class="form-control" id="exampleInputAmount" type="text" >
-          </td>
-          <td>$2,000</td>
-        </tr>
-        <tr>
-          <td>RDA</td>
-          <td>-140</td>
-          <td>67.8%</td>
-          <td>
-            <input class="form-control" id="inputdefault" type="text">
-          </td>
-          <td>$700</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="bet" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <span class="names-bet"></span>
-      <button type="button" class="btn btn-info" style="float: right;">Info</button>
+    <div class='col-md-8 container bet_portfolio_container'>
+      <div class="bet_portfolio">
+        <label>
+          Fight Portfolio<br>
+        </label>
+        <table class="table table-striped table-condensed table-bordered">
+          <thead class="thead-inverse">
+            <tr>
+              <th>Athlete</th>
+              <th>Odds</th>
+              <th>Implied Prob.</th>
+              <th>Bet $</th>
+              <th>Win Profit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>McGoat</td>
+              <td>-100</td>
+              <td>50.8%</td>
+              <td>
+                <input class="form-control" id="exampleInputAmount" type="text" size="5">
+              </td>
+              <td>$2,000</td>
+            </tr>
+            <tr>
+              <td>RDA</td>
+              <td>-140</td>
+              <td>67.8%</td>
+              <td>
+                <input class="form-control" id="inputdefault" type="text" size="5">
+              </td>
+              <td>$700</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="bet" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <span class="names-bet"></span>
+          <button type="button" class="btn btn-info" style="float: right;">Info</button>
+        </div>
+      </div>
     </div>
   </div>
 
