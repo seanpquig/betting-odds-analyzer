@@ -26,8 +26,14 @@ $(function() {
 
 function addRowToPortfolio(athleteName) {
     var $row = $(".athlete_fight_row").first().clone();
-    $row.find("td").empty();
+
+    // Clear existing data and set Name
     $row.find(".athlete_name").html(athleteName);
+    $row.find(".odds").empty();
+    $row.find(".implied_prob").empty();
+    $row.find(".wager").html("<div><span class='input-group-addon'>$</span><input type='text' size='5'></div>");
+    $row.find(".win_profit").empty();
+
     $row.appendTo("#portfolio_table");
 }
 

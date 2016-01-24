@@ -16,6 +16,31 @@ label, input {
 .table td {
    text-align: center;   
 }
+.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>th {
+   background-color: #E8E8E8;
+}
+#portfolio_table td {
+    padding: 0;
+}
+.wager span {
+    float: left;
+    padding: 3px;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    width: 15%;
+}
+.wager input {
+    float: right;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    width: 85%;
+    height: 100%;
+}
 
 .selector_and_portfolio {
     margin-top: 55px;
@@ -62,14 +87,4 @@ label, input {
 }
 .bet_portfolio label {
     font-size: 24px
-}
-.bet {
-    color: white;
-    background-color: #333;
-    /*margin: 5px;*/
-    padding: 8px;
-    /*min-width: 300px;*/
-    height: 53px;
-    border: 2px groove #00b7e6;
-    box-sizing: border-box;
 }
