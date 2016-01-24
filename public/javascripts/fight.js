@@ -2,48 +2,6 @@ if (window.console) {
     console.log("Welcome to your Play application's JavaScript!");
 }
 
-/****************************************************
-    Functions to support drag and drop functionality
-*****************************************************/
-$(function() {
-    $("#selected_fight").draggable({
-      opacity: 1.0,
-      revert: true,
-      revertDuration: 100,
-      zIndex: 100
-    });
-    $("#add_fight_button").droppable({
-      drop: function(event, ui) {
-        var athlete1 = ui.draggable.find("#athlete1_stats");
-        var athlete2 = ui.draggable.find("#athlete2_stats");
-        var athleteName1 = athlete1.find(".fullname")[0].innerText;
-        var athleteName2 = athlete2.find(".fullname")[0].innerText;
-        addRowToPortfolio(athleteName1);
-        addRowToPortfolio(athleteName2);
-      }
-    });
-});
-
-function addRowToPortfolio(athleteName) {
-    var $row = $(".athlete_fight_row").first().clone();
-
-    // Clear existing data and set Name
-    $row.find(".athlete_name").html(athleteName);
-    $row.find(".odds").empty();
-    $row.find(".implied_prob").empty();
-    $row.find(".wager").html("<div><span class='input-group-addon'>$</span><input type='text' size='5'></div>");
-    $row.find(".win_profit").empty();
-
-    $row.appendTo("#portfolio_table");
-}
-
-// Add empty fight to the portfolio
-function addFightToPortfolio() {
-    // Add row for each athlete
-    addRowToPortfolio("");
-    addRowToPortfolio("");
-}
-
 /********************************************
     Objects for tracking and re-using data 
 *********************************************/
@@ -166,4 +124,66 @@ function populateAthleteStats(fightName) {
             }
         }
     );
+}
+
+//Functions to support drag and drop functionality
+$(function() {
+    $("#selected_fight").draggable({
+      opacity: 1.0,
+      revert: true,
+      revertDuration: 100,
+      zIndex: 100
+    });
+    $("#add_fight_button").droppable({
+      drop: function(event, ui) {
+        var athlete1 = ui.draggable.find("#athlete1_stats");
+        var athlete2 = ui.draggable.find("#athlete2_stats");
+        var athleteName1 = athlete1.find(".fullname")[0].innerText;
+        var athleteName2 = athlete2.find(".fullname")[0].innerText;
+        addRowToPortfolio(athleteName1);
+        addRowToPortfolio(athleteName2);
+      }
+    });
+});
+
+function addRowToPortfolio(athleteName) {
+    var $row = $(".athlete_fight_row").first().clone();
+
+    // Clear existing data and set Name
+    $row.find(".athlete_name").html(athleteName);
+    $row.find(".moneyline").empty();
+    $row.find(".implied_prob").empty();
+    $row.find(".wager").html("<div><span class='input-group-addon'>$</span><input type='text' size='5' onchange='updateWinProfit(this)'></div>");
+    $row.find(".win_profit").empty();
+
+    $row.appendTo("#portfolio_table");
+}
+
+// Add empty fight to the portfolio
+function addFightToPortfolio() {
+    // Add row for each athlete
+    addRowToPortfolio("");
+    addRowToPortfolio("");
+}
+
+// Update fight portfolio row stats on changes in input fields
+function updateWinProfit(inputElement) {
+    var wager = parseFloat(inputElement.value);
+    var $row = $(inputElement).closest(".athlete_fight_row");
+    var moneyline = parseFloat($row.find(".moneyline")[0].innerText);
+    var decimalOdds = convertMoneylineToDecimal(moneyline);
+    var winProfit = wager * decimalOdds;
+    $row.find(".win_profit").text("$" + winProfit.toFixed(2));
+}
+
+function convertMoneylineToDecimal(moneyline) {
+    if (moneyline < 0) {
+        return (100 - moneyline) / -moneyline;
+    }
+    else if (moneyline > 0) {
+        return (100 + moneyline) / 100;
+    }
+    else {
+        alert("A moneyline of 0 is invalid!!");
+    }
 }
