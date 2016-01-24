@@ -5,40 +5,38 @@ if (window.console) {
 /****************************************************
     Functions to support drag and drop functionality
 *****************************************************/
-function allowDrop(ev) {
-    ev.preventDefault();
+$(function() {
+    $("#selected_fight").draggable({
+      opacity: 1.0,
+      revert: true,
+      revertDuration: 100,
+      zIndex: 100
+    });
+    $("#add_fight_button").droppable({
+      drop: function(event, ui) {
+        var athlete1 = ui.draggable.find("#athlete1_stats");
+        var athlete2 = ui.draggable.find("#athlete2_stats");
+        var athleteName1 = athlete1.find(".fullname")[0].innerText;
+        var athleteName2 = athlete2.find(".fullname")[0].innerText;
+        addRowToPortfolio(athleteName1);
+        addRowToPortfolio(athleteName2);
+      }
+    });
+});
+
+function addRowToPortfolio(athleteName) {
+    var $row = $(".athlete_fight_row").first().clone();
+    $row.find("td").empty();
+    $row.find(".athlete_name").html(athleteName);
+    $row.appendTo("#portfolio_table");
 }
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
+
+// Add empty fight to the portfolio
+function addFightToPortfolio() {
+    // Add row for each athlete
+    addRowToPortfolio("");
+    addRowToPortfolio("");
 }
-function drop(ev) {
-    ev.preventDefault();
-
-    var dragElementName = ev.dataTransfer.getData("text");
-    var athlete1 = $("." + dragElementName).find("#athlete1_stats");
-    var athlete2 = $("." + dragElementName).find("#athlete2_stats");
-
-    // Get athlete names
-    var athleteName1 = athlete1.find(".fullname")[0].innerText;
-    var athleteName2 = athlete2.find(".fullname")[0].innerText;
-    
-    // Populate data for a give bet this is being dropped on
-    var athleteNode = document.createTextNode(athleteName1 + " vs. " + athleteName2);
-    ev.target.appendChild(athleteNode);
-
-    // Clear the drag data cache (for all formats/types)
-    ev.dataTransfer.clearData();
-}
-
-// Function for duplicating nodes
-function multiplyNode(node, count, deep) {
-    for (var i = 0, copy; i < count - 1; i++) {
-        copy = node.cloneNode(deep);
-        node.parentNode.insertBefore(copy, node);
-    }
-}
-multiplyNode(document.querySelector('.bet'), 5, true);
-
 
 /********************************************
     Objects for tracking and re-using data 

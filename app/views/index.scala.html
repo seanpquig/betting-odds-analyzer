@@ -41,7 +41,7 @@
           <input class="form-control" id="fight" type="text" list="fights" oninput="populateAthleteStats(this.value);">
         </label>
         <datalist id="fights"></datalist>
-        <div id='selected_fight' class='selected_fight' draggable="true" ondragstart="drag(event)">
+        <div id='selected_fight' class='selected_fight'>
           <table class="table table-condensed">
             <tr>
               <td>
@@ -73,7 +73,7 @@
         <label>
           Fight Portfolio<br>
         </label>
-        <table class="table table-striped table-condensed table-bordered">
+        <table class="table table-striped table-condensed table-bordered" id="portfolio_table">
           <thead class="thead-inverse">
             <tr>
               <th>Athlete</th>
@@ -84,8 +84,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>McGoat</td>
+            <tr class="athlete_fight_row">
+              <td class="athlete_name">McGoat</td>
               <td>-100</td>
               <td>50.8%</td>
               <td>
@@ -93,8 +93,8 @@
               </td>
               <td>$2,000</td>
             </tr>
-            <tr>
-              <td>RDA</td>
+            <tr class="athlete_fight_row">
+              <td class="athlete_name">RDA</td>
               <td>-140</td>
               <td>67.8%</td>
               <td>
@@ -104,10 +104,9 @@
             </tr>
           </tbody>
         </table>
-        <div class="bet" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <span class="names-bet"></span>
-          <button type="button" class="btn btn-info" style="float: right;">Info</button>
-        </div>
+        <button type="button" id="add_fight_button" class="btn btn-primary btn-lg btn-block" onclick="addFightToPortfolio()">
+          Add fight to portfolio
+        </button>
       </div>
     </div>
   </div>
