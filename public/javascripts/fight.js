@@ -166,17 +166,33 @@ function addFightToPortfolio() {
     addRowToPortfolio("");
 }
 
+// Update impiled probabilites based on moneylines
+function updateImpliedProbabilites() {
+    $(".athlete_fight_row").each(function(index) {
+        var moneyline = $(this).find(".moneyline").text();
+        var impliedProb = 1 / convertMoneylineToDecimal(moneyline);
+        $(this).find(".implied_prob").text((100 * impliedProb).toFixed(2) + "%");
+    });
+    console.log("done");
+}
+// Run implied prob update on page load
+updateImpliedProbabilites();
+
 // Update fight portfolio row stats on changes in input fields
 function updateWinProfit(inputElement) {
     var wager = parseFloat(inputElement.value);
     var $row = $(inputElement).closest(".athlete_fight_row");
     var moneyline = parseFloat($row.find(".moneyline")[0].innerText);
     var decimalOdds = convertMoneylineToDecimal(moneyline);
+    var impliedProb = 1 / decimalOdds;
     var winProfit = wager * decimalOdds;
+    $row.find(".implied_prob").text((100 * impliedProb).toFixed(2) + "%");
     $row.find(".win_profit").text("$" + winProfit.toFixed(2));
 }
 
 function convertMoneylineToDecimal(moneyline) {
+    // ensure necessary string to float conversion
+    moneyline = parseFloat(moneyline);
     if (moneyline < 0) {
         return (100 - moneyline) / -moneyline;
     }
