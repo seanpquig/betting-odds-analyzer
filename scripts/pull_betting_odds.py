@@ -110,9 +110,14 @@ class OddsFeedConsumer(object):
                             under_moneyline = line_element.attrib['unoddst']
                             over_moneyline = line_element.attrib['ovoddst']
 
-                            # store data
-                            print current_event, event_sub_portion, event_location, visitor_athlete, home_athlete, vistor_moneyline, home_moneyline
-                            # import ecode; code.interact(local=locals())
+                            # store data in MySQL
+                            data_fields = ['league', 'event', 'event_sub_portion', 'event_location', 'visitor_athlete',
+                                           'home_athlete', 'fight_time', 'visitor_moneyline', 'home_moneyline',
+                                           'under_moneyline', 'over_moneyline', 'prop_count']
+                            data_vals = [league_description, current_event, event_sub_portion, event_location,
+                                         visitor_athlete, home_athlete, fight_time, vistor_moneyline, home_moneyline,
+                                         under_moneyline, over_moneyline, prop_count]
+                            self._insert_data('fight_odds_bookmaker_eu', data_fields, data_vals)
 
 
 def args():

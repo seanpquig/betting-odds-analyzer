@@ -2,7 +2,7 @@
  
 # --- !Ups
  
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(256) NOT NULL,
   event_date DATE NOT NULL,

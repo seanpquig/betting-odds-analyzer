@@ -2,7 +2,7 @@
  
 # --- !Ups
  
-CREATE TABLE athletes (
+CREATE TABLE IF NOT EXISTS athletes (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   fullname VARCHAR(256) NOT NULL,
   nickname VARCHAR(256),
