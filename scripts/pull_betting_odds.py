@@ -81,11 +81,7 @@ class OddsFeedConsumer(object):
         for league in mma_leagues:
             league_description = league.attrib['Description']
 
-            event_dict = {}
-            # Elements to populate while parsing league XML child nodes
-            event = None
-            event_sub_portion = None
-            event_location = None
+            # confirms when event element is coming up (needed because this XML data is poorly structured)
             next_element_is_event = False
 
             for element in league:
