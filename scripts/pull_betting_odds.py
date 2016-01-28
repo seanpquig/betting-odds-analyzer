@@ -77,7 +77,46 @@ class OddsFeedConsumer(object):
         tree = ElementTree.fromstring(response.content)
         leagues = tree.findall("./Leagues/league")
         mma_leagues = filter(lambda l: self.is_mma_description(l.attrib['Description']), leagues)
-        import code; code.interact(local=locals())
+
+        for league in mma_leagues:
+            league_description = league.attrib['Description']
+
+            event_dict = {}
+            # Elements to populate while parsing league XML child nodes
+            event = None
+            event_sub_portion = None
+            event_location = None
+            next_element_is_event = False
+
+            for element in league:
+                # Check if node needs to be consumed as the next event
+                if next_element_is_event:
+                    current_event = element.attrib['vtm']
+                    event_location = element.attrib['htm']
+                    next_element_is_event = False
+                else:
+                    # Check if node is banner signaling start of a new event
+                    if element.attrib.get('ab') == 'True' and element.tag == 'banner':
+                        next_element_is_event = True
+                    else:
+                        # if a banner then it's simply grouping fights within a portion of an event
+                        if element.tag == 'banner':
+                            event_sub_portion = element.attrib['vtm']
+                        elif element.tag == 'game':
+                            visitor_athlete = element.attrib['vtm']
+                            home_athlete = element.attrib['htm']
+                            fight_time = element.attrib['gmtm']
+                            prop_count = element.attrib['propCount']
+
+                            line_element = element.find("./line")
+                            vistor_moneyline = line_element.attrib['voddst']
+                            home_moneyline = line_element.attrib['hoddst']
+                            under_moneyline = line_element.attrib['unoddst']
+                            over_moneyline = line_element.attrib['ovoddst']
+
+                            # store data
+                            print current_event, event_sub_portion, event_location, visitor_athlete, home_athlete, vistor_moneyline, home_moneyline
+                            # import ecode; code.interact(local=locals())
 
 
 def args():
