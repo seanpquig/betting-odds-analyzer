@@ -65,7 +65,13 @@ function createFightOption(fightId, athlete1Id, athlete2Id) {
         function(data, textStatus, xhr) {
             if(textStatus == "success") {
                 var fightName = data["athlete1"]+ " vs. " + data["athlete2"];
-                fightToAthleteData[fightName] = {"athlete1_id": athlete1Id, "athlete2_id": athlete2Id};
+                fightToAthleteData[fightName] = {
+                    "athlete1_id": athlete1Id,
+                    "athlete1_name": data["athlete1"],
+                    "athlete2_id": athlete2Id,
+                    "athlete2_name": data["athlete2"],
+                    "fight_id": fightId
+                };
 
                 // Create datalist option
                 $("#fights").append(
@@ -121,6 +127,29 @@ function populateAthleteStats(fightName) {
             }
             if(textStatus == "error") {
                 alert("Error for getFights: " + xhr.status + ": " + xhr.statusText);
+            }
+        }
+    );
+
+    // Pull fight odds
+    var fightId = fightToAthleteData[fightName]["fight_id"];
+    var athlete1Name = fightToAthleteData[fightName]["athlete1_name"];
+    var athlete2Name = fightToAthleteData[fightName]["athlete2_name"];
+    var getOddsCall = jsRoutes.controllers.StatsDatabase.getOdds(fightId);
+    $.getJSON(
+        getOddsCall.url,
+        function(data, textStatus, xhr) {
+            if(textStatus == "success") {
+                // Set spans in athlete2_stats div
+                var odds1 = data[athlete1Name];
+                var odds2 = data[athlete2Name];
+                if (odds1 > 0) odds1 = "+" + odds1;
+                if (odds2 > 0) odds2 = "+" + odds2;
+                $("#athlete1_stats span.odds").text(odds1);
+                $("#athlete2_stats span.odds").text(odds2);
+            }
+            if(textStatus == "error") {
+                alert("Error for getOdds: " + xhr.status + ": " + xhr.statusText);
             }
         }
     );

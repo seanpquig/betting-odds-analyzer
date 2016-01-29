@@ -16,8 +16,9 @@ class Application extends Controller {
         routes.javascript.StatsDatabase.getOrganizations,
         routes.javascript.StatsDatabase.getEvents,
         routes.javascript.StatsDatabase.getFights,
+        routes.javascript.StatsDatabase.getAthlete,
         routes.javascript.StatsDatabase.getAthleteNames,
-        routes.javascript.StatsDatabase.getAthlete
+        routes.javascript.StatsDatabase.getOdds
       )
     ).as("text/javascript")
   }

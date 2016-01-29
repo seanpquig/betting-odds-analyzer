@@ -65,7 +65,7 @@ label, input {
 }
 .athlete_stats {
     min-width: 100px;
-    min-height: 86px;
+    min-height: 106px;
     color: white;
     background-color: #333;
     border: 3px groove #00b7e6;
