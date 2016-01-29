@@ -169,18 +169,21 @@ $(function() {
         var athlete2 = ui.draggable.find("#athlete2_stats");
         var athleteName1 = athlete1.find(".fullname")[0].innerText;
         var athleteName2 = athlete2.find(".fullname")[0].innerText;
-        addRowToPortfolio(athleteName1);
-        addRowToPortfolio(athleteName2);
+        var moneyline1 = athlete1.find(".odds")[0].innerText;
+        var moneyline2 = athlete2.find(".odds")[0].innerText;
+        addRowToPortfolio(athleteName1, moneyline1);
+        addRowToPortfolio(athleteName2, moneyline2);
+        updateImpliedProbabilites();
       }
     });
 });
 
-function addRowToPortfolio(athleteName) {
+function addRowToPortfolio(athleteName, moneyline) {
     var $row = $(".athlete_fight_row").first().clone();
 
     // Clear existing data and set Name
     $row.find(".athlete_name").html(athleteName);
-    $row.find(".moneyline").empty();
+    $row.find(".moneyline").html(moneyline);
     $row.find(".implied_prob").empty();
     $row.find(".wager").html("<div><span class='input-group-addon'>$</span><input type='text' size='5' onchange='updateWinProfit(this)'></div>");
     $row.find(".win_profit").empty();
@@ -191,8 +194,8 @@ function addRowToPortfolio(athleteName) {
 // Add empty fight to the portfolio
 function addFightToPortfolio() {
     // Add row for each athlete
-    addRowToPortfolio("");
-    addRowToPortfolio("");
+    addRowToPortfolio("", "");
+    addRowToPortfolio("", "");
 }
 
 // Update impiled probabilites based on moneylines
