@@ -75,30 +75,6 @@ class StatsDatabase extends Controller {
     }
   }
 
-  def getAthleteNames(fightId: Int) = Action {
-    DB.withConnection { implicit c =>
-      val parser = str(1) ~ str(2) map flatten
-      val sqlResult = SQL(
-        s"""
-          SELECT
-            a1.fullname athlete1,
-            a2.fullname athlete2
-          FROM fights
-          INNER JOIN athletes a1 ON fights.athlete1_id = a1.id
-          INNER JOIN athletes a2 ON fights.athlete2_id = a2.id
-          WHERE fights.id = $fightId
-        """
-      ).as(parser.*)
-      val jsonObjects = sqlResult.map { fight =>
-        Json.obj(
-          "athlete1" -> fight._1,
-          "athlete2" -> fight._2
-        )
-      }
-      Ok(jsonObjects(0))
-    }
-  }
-
   def getAthlete(id: Int) = Action {
     DB.withConnection { implicit c =>
       val parser =
@@ -141,8 +117,85 @@ class StatsDatabase extends Controller {
           "losses_dec" -> athlete._17
         )
       }
-      Ok(jsonObjects(0))
+      Ok(jsonObjects.head)
     }
+  }
+
+  def getAthleteNames(fightId: Int) = Action {
+    DB.withConnection { implicit c =>
+      val (athlete1, athlete2) = athleteNamesQuery(fightId)
+      val athletesJson = Json.obj(
+        "athlete1" -> athlete1,
+        "athlete2" -> athlete2
+      )
+      Ok(athletesJson)
+    }
+  }
+
+  private def athleteNamesQuery(fightId: Int): (String, String) = {
+    DB.withConnection { implicit c =>
+      val parser = str(1) ~ str(2) map flatten
+      val sqlResult = SQL(
+        s"""
+          SELECT
+            a1.fullname athlete1,
+            a2.fullname athlete2
+          FROM fights
+          INNER JOIN athletes a1 ON fights.athlete1_id = a1.id
+          INNER JOIN athletes a2 ON fights.athlete2_id = a2.id
+          WHERE fights.id = $fightId
+        """
+      ).as(parser.*)
+      sqlResult.head
+    }
+  }
+
+  /**
+   * Get fight odds for a given fightId.  Fight data and Odds data currently come
+   * from separate sources, so this entails some messy logic to link the data.
+   * @param fightId
+   */
+  def getOdds(fightId: Int) = Action {
+    val (athlete1, athlete2) = athleteNamesQuery(fightId)
+    DB.withConnection { implicit c =>
+      val parser =
+        str("visitor_athlete") ~
+        str("home_athlete") ~
+        int("visitor_moneyline") ~
+        int("home_moneyline") map flatten
+      val sqlResult = SQL(
+        s"""
+          SELECT
+            visitor_athlete,
+            home_athlete,
+            visitor_moneyline,
+            home_moneyline
+          FROM fight_odds_bookmaker_eu
+        """
+      ).as(parser.*)
+
+      // Filter out fight we are looking for
+      val oddsRow = sqlResult.filter(row => oddsFilter(athlete1, athlete2, row)).head
+
+      val oddsJson = Json.obj(
+        oddsRow._1.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> oddsRow._3,
+        oddsRow._2.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> oddsRow._4
+      )
+      Ok(oddsJson)
+    }
+  }
+
+  private def oddsFilter(athlete1: String, athlete2: String, oddsRow: (String, String, Int, Int)): Boolean = {
+    val visitorAthlete = oddsRow._1.toLowerCase
+    val homeAthlete = oddsRow._2.toLowerCase
+
+    // Check if 2 athlete parameters match the visitor/home athletes for theses odds
+    if (visitorAthlete == athlete1.toLowerCase && homeAthlete == athlete2.toLowerCase)
+      true
+    else if (visitorAthlete == athlete2.toLowerCase && homeAthlete == athlete1.toLowerCase)
+      true
+    else
+      false
   }
 
 }
