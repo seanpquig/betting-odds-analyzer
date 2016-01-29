@@ -15,7 +15,7 @@ var fightToAthleteData = {};
     On page-load => populate events drop down
 *************************************************/
 $(document).ready(function() {
-    var getEventsCall = jsRoutes.controllers.StatsDatabase.getEvents(1);
+    var getEventsCall = jsRoutes.controllers.StatsDatabase.getEvents(8);
     $.getJSON(
         getEventsCall.url,
         function(data, textStatus, xhr) {

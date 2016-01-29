@@ -82,7 +82,7 @@ class SherdogScraper(object):
 
         # Pull data for organization's events
         events = soup.findAll('tr', {'itemtype': 'http://schema.org/Event'})
-        for event in events[10:13]:
+        for event in events[:10]:
             event_href = event.a['href']
             self.get_event_data(event_href, org_id)
 
@@ -126,9 +126,19 @@ class SherdogScraper(object):
         id1 = self.get_athlete_data(athlete1.a['href'])
         id2 = self.get_athlete_data(athlete2.a['href'])
 
-        # Get fight data
-        result1 = athlete1.find('span', {'class': 'final_result'}).string
-        result2 = athlete2.find('span', {'class': 'final_result'}).string
+        # Fight data that could be None if it's a future fight
+        result1 = None
+        result2 = None
+        end_round = None
+        end_round_time = None
+        method = None
+        referee = None
+
+        # Get fight result
+        if athlete1.find('span', {'class': 'final_result'}):
+            result1 = athlete1.find('span', {'class': 'final_result'}).string
+        if athlete2.find('span', {'class': 'final_result'}):
+            result2 = athlete2.find('span', {'class': 'final_result'}).string
 
         resume = fight_data.find('table', {'class': 'resume'})
         if resume:
@@ -140,10 +150,11 @@ class SherdogScraper(object):
             referee = fight_attrs['Referee']
         else:
             table_data = fight_data.findAll('td')
-            end_round = table_data[-2].string
-            end_round_time = table_data[-1].string
-            method = table_data[-3].contents[0]
-            referee = table_data[-3].span.string
+            if table_data:
+                end_round = table_data[-2].string
+                end_round_time = table_data[-1].string
+                method = table_data[-3].contents[0]
+                referee = table_data[-3].span.string
 
         # Add fight data to MySQL
         fight_fields = ['event_id', 'athlete1_id', 'athlete2_id', 'athlete1_result',

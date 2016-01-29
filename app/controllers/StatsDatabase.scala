@@ -50,12 +50,12 @@ class StatsDatabase extends Controller {
         int("event_id") ~
         int("athlete1_id") ~
         int("athlete2_id") ~
-        str("athlete1_result") ~
-        str("athlete2_result") ~
-        int("end_round") ~
-        str("end_round_time") ~
-        str("method") ~
-        str("referee") map flatten
+        get[Option[String]]("athlete1_result") ~
+        get[Option[String]]("athlete2_result") ~
+        get[Option[Int]]("end_round") ~
+        get[Option[String]]("end_round_time") ~
+        get[Option[String]]("method") ~
+        get[Option[String]]("referee") map flatten
       val sqlResult = SQL(s"SELECT * FROM fights WHERE event_id = $eventId").as(parser.*)
       val jsonObjects = sqlResult.map { fight =>
         Json.obj(
