@@ -155,6 +155,24 @@ function populateAthleteStats(fightName) {
     );
 }
 
+// Figth portfolio cell navigation function (call on startup up and new cell creation)
+function applyCellNavigation() {
+    $('.wager').keypress(function(event){
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){
+            // focus on wager cell below
+            var wagers = $(this).closest("tbody").find(".wager");
+            var nextWagerIndex = wagers.index(this) + 1;
+            if(nextWagerIndex < wagers.length) {
+                wagers.eq(wagers.index(this) + 1).find("input").focus();
+            } else {
+                $(this).find("input").blur();
+            }
+        }
+    });
+}
+applyCellNavigation();
+
 //Functions to support drag and drop functionality
 $(function() {
     $("#selected_fight").draggable({
@@ -189,6 +207,8 @@ function addRowToPortfolio(athleteName, moneyline) {
     $row.find(".win_profit").empty();
 
     $row.appendTo("#portfolio_table");
+    // apply cell navigation
+    applyCellNavigation();
 }
 
 // Add empty fight to the portfolio
@@ -205,7 +225,6 @@ function updateImpliedProbabilites() {
         var impliedProb = 1 / convertMoneylineToDecimal(moneyline);
         $(this).find(".implied_prob").text((100 * impliedProb).toFixed(2) + "%");
     });
-    console.log("done");
 }
 // Run implied prob update on page load
 updateImpliedProbabilites();

@@ -175,12 +175,16 @@ class StatsDatabase extends Controller {
       ).as(parser.*)
 
       // Filter out fight we are looking for
-      val oddsRow = sqlResult.filter(row => oddsFilter(athlete1, athlete2, row)).head
+      val oddsRow = sqlResult.filter(row => oddsFilter(athlete1, athlete2, row))
 
-      val oddsJson = Json.obj(
-        oddsRow._1.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> oddsRow._3,
-        oddsRow._2.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> oddsRow._4
-      )
+      val oddsJson = oddsRow match {
+        case x :: xs =>
+        Json.obj(
+          x._1.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> x._3,
+          x._2.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> x._4
+        )
+        case Nil => Json.obj()
+      }
       Ok(oddsJson)
     }
   }
