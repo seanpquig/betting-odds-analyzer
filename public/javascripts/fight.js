@@ -2,6 +2,11 @@ if (window.console) {
     console.log("Welcome to your Play application's JavaScript!");
 }
 
+// Global vars
+var ENTER = 13;
+var UP = 38;
+var DOWN = 40;
+
 /********************************************
     Objects for tracking and re-using data 
 *********************************************/
@@ -157,19 +162,48 @@ function populateAthleteStats(fightName) {
 
 // Figth portfolio cell navigation function (call on startup up and new cell creation)
 function applyCellNavigation() {
-    $('.wager').keypress(function(event){
+
+    $(".wager").keypress(function(event) {
         var keycode = (event.keyCode ? event.keyCode : event.which);
-        if(keycode == '13'){
+
+        if(keycode == ENTER) {
             // focus on wager cell below
             var wagers = $(this).closest("tbody").find(".wager");
             var nextWagerIndex = wagers.index(this) + 1;
             if(nextWagerIndex < wagers.length) {
-                wagers.eq(wagers.index(this) + 1).find("input").focus();
+                wagers.eq(nextWagerIndex).find("input").focus();
             } else {
                 $(this).find("input").blur();
             }
         }
     });
+
+    $(".wager").keydown(function() {
+        var wagers;
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+
+        if(keycode == UP) {
+            // focus on wager cell above
+            wagers = $(this).closest("tbody").find(".wager");
+            var previousWagerIndex = wagers.index(this) - 1;
+            if(previousWagerIndex >= 0) {
+                wagers.eq(previousWagerIndex).find("input").focus();
+            } else {
+                wagers.eq(wagers.length - 1).find("input").focus();
+            }
+        }
+        else if(keycode == DOWN) {
+            // focus on wager cell below
+            wagers = $(this).closest("tbody").find(".wager");
+            var nextWagerIndex = wagers.index(this) + 1;
+            if(nextWagerIndex < wagers.length) {
+                wagers.eq(nextWagerIndex).find("input").focus();
+            } else {
+                wagers.eq(0).find("input").focus();
+            }
+        }
+    });
+
 }
 applyCellNavigation();
 
