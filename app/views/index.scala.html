@@ -33,14 +33,12 @@
       <div class='fight_selector'>
         <label>
           Select an event<br>
-          <input class="form-control" id="event" type="text" list="events" oninput="populateFights(this.value)">
+          <select class="form-control" id="event" onchange="populateFights(this.value)"></select>
         </label>
-        <datalist id="events"></datalist>
         <label>
           Select a fight<br>
-          <input class="form-control" id="fight" type="text" list="fights" oninput="populateAthleteStats(this.value);">
+          <select class="form-control" id="fight" onchange="populateAthleteStats(this.value)"></select>
         </label>
-        <datalist id="fights"></datalist>
         <div id='selected_fight' class='selected_fight'>
           <table class="table table-condensed">
             <tr>

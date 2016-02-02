@@ -26,8 +26,8 @@ $(document).ready(function() {
         function(data, textStatus, xhr) {
             if(textStatus == "success") {
                 $.each(data, function(index, value) {
-                    // Create datalist option
-                    $("#events").append("<option value='" + value["name"] + "'></option>");
+                    // Create option
+                    $("#event").append("<option>" + value["name"] + "</option>");
                     // Add item to event name to ID map
                     eventNameIdMap[value["name"]] = value["id"];
                 });
@@ -51,7 +51,7 @@ function populateFights(eventName) {
         function(data, textStatus, xhr) {
             if(textStatus == "success") {
                 // Clear original list
-                $("#fights").empty();
+                $("#fight").empty();
                 $.each(data, function(index, value) {
                      createFightOption(value["id"], value["athlete1_id"], value["athlete2_id"]);
                 });
@@ -78,9 +78,9 @@ function createFightOption(fightId, athlete1Id, athlete2Id) {
                     "fight_id": fightId
                 };
 
-                // Create datalist option
-                $("#fights").append(
-                    "<option value='" + fightName + "'></option>"
+                // Create option
+                $("#fight").append(
+                    "<option>" + fightName + "</option>"
                 );
             }
             if(textStatus == "error") {
@@ -135,6 +135,9 @@ function populateAthleteStats(fightName) {
             }
         }
     );
+
+    // Clear fight odds if they might exist
+    $(".odds").empty();
 
     // Pull fight odds
     var fightId = fightToAthleteData[fightName]["fight_id"];
