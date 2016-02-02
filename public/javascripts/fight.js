@@ -29,7 +29,7 @@ $(document).ready(function() {
                     // Create option
                     $("#event").append("<option>" + value["name"] + "</option>");
                     // Add item to event name to ID map
-                    eventNameIdMap[value["name"]] = value["id"];
+                    eventNameIdMap[value["name"].replace(/ /g,'')] = value["id"];
                 });
             }
             if(textStatus == "error") {
@@ -44,7 +44,7 @@ $(document).ready(function() {
     On event-selection => populate fights drop down
 ****************************************************/
 function populateFights(eventName) {
-    var eventId = eventNameIdMap[eventName];
+    var eventId = eventNameIdMap[eventName.replace(/ /g,'')];
     var getFightsCall = jsRoutes.controllers.StatsDatabase.getFights(eventId);
     $.getJSON(
         getFightsCall.url,
