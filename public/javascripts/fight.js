@@ -87,7 +87,16 @@ function createFightOption(fightId, athlete1Id, athlete2Id) {
                 alert("Error for getAthleteNames: " + xhr.status + ": " + xhr.statusText);
             }
         }
-    );
+    )
+        .done(function() {
+            // Populate athlete stats after first element is generated
+            var fightOptions = $("#fight").find("option");
+
+            if(fightOptions.length == 1) {
+                var firstFightName = fightOptions.first().text();
+                populateAthleteStats(firstFightName);
+            }
+        });
 }
 
 
