@@ -29,7 +29,7 @@
     </div>
   </nav>
   <div class="selector_and_portfolio">
-    <div class='col-md-4 container fight_selector_container'>
+    <div class="col-md-4 container fight_selector_container">
       <div class='fight_selector'>
         <label>
           Select an event<br>
@@ -68,7 +68,7 @@
         </div>
       </div>
     </div>
-    <div class='col-md-8 container bet_portfolio_container'>
+    <div class="col-md-8 container bet_portfolio_container">
       <div class="bet_portfolio">
         <label>
           Fight Portfolio<br>
@@ -113,6 +113,37 @@
         <button type="button" id="add_fight_button" class="btn btn-primary btn-lg btn-block" onclick="addFightToPortfolio()">
           Add fight to portfolio
         </button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7 container summary_container">
+    <div class="portfolio_summary">
+      <table class="table table-condensed summary_table" >
+        <tbody>
+          <tr>
+            <td>Total bet</td>
+            <td>$520</td>
+          </tr>
+          <tr>
+            <td>Max profit</td>
+            <td>$899</td>
+          </tr>
+          <tr>
+            <td>Expected profit</td>
+            <td>-$57</td>
+          </tr>
+          <tr>
+            <td>Max return</td>
+            <td>-78%</td>
+          </tr>
+          <tr>
+            <td>Expected return</td>
+            <td>-8.5%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="probability_distribution">
+        <img src="@routes.Assets.versioned("images/distribution.png")" alt="distribution" style="width:360px;height:228px;">
       </div>
     </div>
   </div>

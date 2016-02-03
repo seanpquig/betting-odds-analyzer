@@ -88,3 +88,22 @@ label, input {
 .bet_portfolio label {
     font-size: 24px
 }
+
+.summary_container {
+    padding: 10px;
+}
+.portfolio_summary {
+    border: 3px groove;
+    border-radius: 3px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.summary_table {
+    max-width: 250px;
+    float: left;
+}
+.probability_distribution {
+    float: right;
+    margin: 10px;
+}
+
