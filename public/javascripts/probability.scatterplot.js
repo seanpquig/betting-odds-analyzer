@@ -3,9 +3,7 @@ var margin = {t:30, r:20, b:20, l:40 },
     w = 600 - margin.l - margin.r,
     h = 500 - margin.t - margin.b,
     x = d3.scale.linear().range([0, w]),
-    y = d3.scale.linear().range([h - 60, 0]),
-    //colors that will reflect geographical regions
-    color = d3.scale.category10();
+    y = d3.scale.linear().range([h - 60, 0]);
 
 var svg = d3.select("#chart").append("svg")
     .attr("width", w + margin.l + margin.r)
@@ -29,20 +27,26 @@ var yAxis = d3.svg.axis()
 // group that will contain all of the plots
 var groups = svg.append("g").attr("transform", "translate(" + margin.l + "," + margin.t + ")");
 
-// array of the regions, used for the legend
-var regions = ["Asia", "Europe", "Middle East", "N. America", "S. America", "Sub-Saharan Africa"];
+// array of outcome types
+var outcomes = ["gain", "loss", "break-even"];
+var outcomeColors = {"gain": "#009900", "loss": "#ff0000", "break-even": "#0000ff"};
 
 
-// bring in the data, and do everything that is data-driven
-d3.csv("assets/stylesheets/trust-business.csv", function(data) {
+var data = [
+                {"country": "South Korea", "profit": "0", "probability": "60", "outcome": "break-even"},
+                {"country": "North Korea", "profit": "-90", "probability": "5", "outcome": "loss"},
+                {"country": "Germany", "profit": "70", "probability": "100", "outcome": "gain"}
+            ];
 
-    // sort data alphabetically by region, so that the colors match with legend
-    data.sort(function(a, b) { return d3.ascending(a.region, b.region); });
+$(function() {
+
+    // sort data alphabetically by outcome, so that the colors match with legend
+    data.sort(function(a, b) { return d3.ascending(a.outcome, b.outcome); });
     console.log(data);
 
-    var x0 = Math.max(-d3.min(data, function(d) { return d.trust; }), d3.max(data, function(d) { return d.trust; }));
+    var x0 = Math.max(-d3.min(data, function(d) { return d.profit; }), d3.max(data, function(d) { return d.profit; }));
     x.domain([-100, 100]);
-    y.domain([180, 0]);
+    y.domain([0, 100]);
 
     // style the circles, set their locations based on data
     var circles = groups.selectAll("circle")
@@ -50,12 +54,12 @@ d3.csv("assets/stylesheets/trust-business.csv", function(data) {
         .enter().append("circle")
         .attr("class", "circles")
         .attr({
-            cx: function(d) { return x(+d.trust); },
-            cy: function(d) { return y(+d.business); },
+            cx: function(d) { return x(+d.profit); },
+            cy: function(d) { return y(+d.probability); },
             r: 8,
             id: function(d) { return d.country; }
         })
-        .style("fill", function(d) { return color(d.region); });
+        .style("fill", function(d) { return outcomeColors[d.outcome]; });
 
     // what to do when we mouse over a bubble
     var mouseOn = function() {
@@ -139,7 +143,7 @@ d3.csv("assets/stylesheets/trust-business.csv", function(data) {
 
     // the legend color guide
     var legend = svg.selectAll("rect")
-        .data(regions)
+        .data(outcomes)
         .enter().append("rect")
         .attr({
             x: function(d, i) { return (40 + i*80); },
@@ -147,12 +151,14 @@ d3.csv("assets/stylesheets/trust-business.csv", function(data) {
             width: 25,
             height: 12
         })
-        .style("fill", function(d) { return color(d); });
+        .style("fill", function(d) {
+            return outcomeColors[d]; }
+        );
 
 
     // legend labels
     svg.selectAll("text")
-        .data(regions)
+        .data(outcomes)
         .enter().append("text")
         .attr({
             x: function(d, i) { return (40 + i*80); },
@@ -176,7 +182,7 @@ d3.csv("assets/stylesheets/trust-business.csv", function(data) {
         .attr("text-anchor", "end")
         .attr("x", w + 50)
         .attr("y", h - margin.t - 5)
-        .text("others in society seen as trustworthy*");
+        .text("profit ($)");
 
     svg.append("text")
         .attr("class", "y label")
@@ -185,6 +191,6 @@ d3.csv("assets/stylesheets/trust-business.csv", function(data) {
         .attr("y", 45)
         .attr("dy", ".75em")
         .attr("transform", "rotate(-90)")
-        .text("ease of doing business (rank)");
+        .text("probability (%)");
 
 });
