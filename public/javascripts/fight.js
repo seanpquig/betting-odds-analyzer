@@ -24,7 +24,7 @@ $(document).ready(function() {
     $.getJSON(
         getEventsCall.url,
         function(data, textStatus, xhr) {
-            if(textStatus == "success") {
+            if (textStatus == "success") {
                 $.each(data, function(index, value) {
                     // Create option
                     $("#event").append("<option>" + value["name"] + "</option>");
@@ -32,7 +32,7 @@ $(document).ready(function() {
                     eventNameIdMap[value["name"].replace(/ /g,'')] = value["id"];
                 });
             }
-            if(textStatus == "error") {
+            if (textStatus == "error") {
                 alert("Error for getEvents: " + xhr.status + ": " + xhr.statusText);
             }
         }
@@ -49,14 +49,14 @@ function populateFights(eventName) {
     $.getJSON(
         getFightsCall.url,
         function(data, textStatus, xhr) {
-            if(textStatus == "success") {
+            if (textStatus == "success") {
                 // Clear original list
                 $("#fight").empty();
                 $.each(data, function(index, value) {
                      createFightOption(value["id"], value["athlete1_id"], value["athlete2_id"]);
                 });
             }
-            if(textStatus == "error") {
+            if (textStatus == "error") {
                 alert("Error for getFights: " + xhr.status + ": " + xhr.statusText);
             }
         }
@@ -68,7 +68,7 @@ function createFightOption(fightId, athlete1Id, athlete2Id) {
     $.getJSON(
         getAthleteNamesCall.url,
         function(data, textStatus, xhr) {
-            if(textStatus == "success") {
+            if (textStatus == "success") {
                 var fightName = data["athlete1"]+ " vs. " + data["athlete2"];
                 fightToAthleteData[fightName] = {
                     "athlete1_id": athlete1Id,
@@ -83,7 +83,7 @@ function createFightOption(fightId, athlete1Id, athlete2Id) {
                     "<option>" + fightName + "</option>"
                 );
             }
-            if(textStatus == "error") {
+            if (textStatus == "error") {
                 alert("Error for getAthleteNames: " + xhr.status + ": " + xhr.statusText);
             }
         }
@@ -92,7 +92,7 @@ function createFightOption(fightId, athlete1Id, athlete2Id) {
             // Populate athlete stats after first element is generated
             var fightOptions = $("#fight").find("option");
 
-            if(fightOptions.length == 1) {
+            if (fightOptions.length == 1) {
                 var firstFightName = fightOptions.first().text();
                 populateAthleteStats(firstFightName);
             }
@@ -111,7 +111,7 @@ function populateAthleteStats(fightName) {
     $.getJSON(
         getAthleteCall1.url,
         function(data, textStatus, xhr) {
-            if(textStatus == "success") {
+            if (textStatus == "success") {
                 // Set spans in athlete1_stats div
                 $("#athlete1_stats span.fullname").text(data['fullname']);
                 var record = data['wins'] + "-" + data['losses'];
@@ -119,7 +119,7 @@ function populateAthleteStats(fightName) {
                 $("#athlete1_stats span.weight").text(data['weight_kg'] + "kg");
                 $("#athlete1_stats span.height").text(data['height_cm'] + "cm");
             }
-            if(textStatus == "error") {
+            if (textStatus == "error") {
                 alert("Error for getFights: " + xhr.status + ": " + xhr.statusText);
             }
         }
@@ -131,7 +131,7 @@ function populateAthleteStats(fightName) {
     $.getJSON(
         getAthleteCall2.url,
         function(data, textStatus, xhr) {
-            if(textStatus == "success") {
+            if (textStatus == "success") {
                 // Set spans in athlete2_stats div
                 $("#athlete2_stats span.fullname").text(data['fullname']);
                 var record = data['wins'] + "-" + data['losses'];
@@ -139,7 +139,7 @@ function populateAthleteStats(fightName) {
                 $("#athlete2_stats span.weight").text(data['weight_kg'] + "kg");
                 $("#athlete2_stats span.height").text(data['height_cm'] + "cm");
             }
-            if(textStatus == "error") {
+            if (textStatus == "error") {
                 alert("Error for getFights: " + xhr.status + ": " + xhr.statusText);
             }
         }
@@ -156,7 +156,7 @@ function populateAthleteStats(fightName) {
     $.getJSON(
         getOddsCall.url,
         function(data, textStatus, xhr) {
-            if(textStatus == "success") {
+            if (textStatus == "success") {
                 // Set spans in athlete2_stats div
                 var odds1 = data[athlete1Name];
                 var odds2 = data[athlete2Name];
@@ -165,7 +165,7 @@ function populateAthleteStats(fightName) {
                 $("#athlete1_stats span.odds").text(odds1);
                 $("#athlete2_stats span.odds").text(odds2);
             }
-            if(textStatus == "error") {
+            if (textStatus == "error") {
                 alert("Error for getOdds: " + xhr.status + ": " + xhr.statusText);
             }
         }
@@ -178,11 +178,11 @@ function applyCellNavigation() {
     $(".wager").keypress(function(event) {
         var keycode = (event.keyCode ? event.keyCode : event.which);
 
-        if(keycode == ENTER) {
+        if (keycode == ENTER) {
             // focus on wager cell below
             var wagers = $(this).closest("tbody").find(".wager");
             var nextWagerIndex = wagers.index(this) + 1;
-            if(nextWagerIndex < wagers.length) {
+            if (nextWagerIndex < wagers.length) {
                 wagers.eq(nextWagerIndex).find("input").focus();
             } else {
                 $(this).find("input").blur();
@@ -194,21 +194,21 @@ function applyCellNavigation() {
         var wagers;
         var keycode = (event.keyCode ? event.keyCode : event.which);
 
-        if(keycode == UP) {
+        if (keycode == UP) {
             // focus on wager cell above
             wagers = $(this).closest("tbody").find(".wager");
             var previousWagerIndex = wagers.index(this) - 1;
-            if(previousWagerIndex >= 0) {
+            if (previousWagerIndex >= 0) {
                 wagers.eq(previousWagerIndex).find("input").focus();
             } else {
                 wagers.eq(wagers.length - 1).find("input").focus();
             }
         }
-        else if(keycode == DOWN) {
+        else if (keycode == DOWN) {
             // focus on wager cell below
             wagers = $(this).closest("tbody").find(".wager");
             var nextWagerIndex = wagers.index(this) + 1;
-            if(nextWagerIndex < wagers.length) {
+            if (nextWagerIndex < wagers.length) {
                 wagers.eq(nextWagerIndex).find("input").focus();
             } else {
                 wagers.eq(0).find("input").focus();
@@ -282,9 +282,30 @@ function updateWinProfit(inputElement) {
     var moneyline = parseFloat($row.find(".moneyline")[0].innerText);
     var decimalOdds = convertMoneylineToDecimal(moneyline);
     var impliedProb = 1 / decimalOdds;
-    var winProfit = wager * decimalOdds;
+    var winProfit = wager * (decimalOdds - 1);
     $row.find(".implied_prob").text((100 * impliedProb).toFixed(2) + "%");
     $row.find(".win_profit").text("$" + winProfit.toFixed(2));
+
+    // Update scatterplot
+    var plotData = [];
+    var portfolioRows = $("#portfolio_table").find("tr");
+    var numRows = portfolioRows.length;
+    for (var i = 0; i < numRows; i++) {
+        var row = portfolioRows[i];
+        var rowWager = $(row).find(".wager").find("input").val();
+
+        // Check if row has wager defined
+        if (typeof rowWager !== "undefined" && rowWager !== "") {
+            var rowProb = $(row).find(".implied_prob").text();
+            var rowProfit = $(row).find(".win_profit").text();
+
+            // add row data as item for scatter plot
+            plotItem = {"wager": rowWager, "probability": rowProb, "profit": rowProfit};
+            plotData.push(plotItem);
+        }
+    }
+
+    var x = 8;
 }
 
 function convertMoneylineToDecimal(moneyline) {
