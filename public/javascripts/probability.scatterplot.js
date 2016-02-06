@@ -31,14 +31,12 @@ var groups = svg.append("g").attr("transform", "translate(" + margin.l + "," + m
 var outcomes = ["gain", "loss", "break-even"];
 var outcomeColors = {"gain": "#009900", "loss": "#ff0000", "break-even": "#0000ff"};
 
+// Initialize empty scatter plot
+// drawScatterPlot([{}]);
 
-var data = [
-                {"country": "South Korea", "profit": "0", "probability": "60", "outcome": "break-even"},
-                {"country": "North Korea", "profit": "-90", "probability": "5", "outcome": "loss"},
-                {"country": "Germany", "profit": "70", "probability": "100", "outcome": "gain"}
-            ];
+function drawScatterPlot(betData) {
 
-$(function() {
+    var data = generateOutcomePlotItems(betData);
 
     // sort data alphabetically by outcome, so that the colors match with legend
     data.sort(function(a, b) { return d3.ascending(a.outcome, b.outcome); });
@@ -193,4 +191,41 @@ $(function() {
         .attr("transform", "rotate(-90)")
         .text("probability (%)");
 
-});
+}
+
+function generateOutcomePlotItems(betData) {
+    // Pull out fields of betData
+    var wagers = betData.map(function(x) { return parseFloat(x.wager); });
+    var probabilites = betData.map(function(x) { return parseFloat(x.probability); });
+    var profits = betData.map(function(x) { return parseFloat(x.profit); });
+    // Calculate relevant sums
+    var totalWager = wagers.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
+    var maxProfit = profits.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
+
+    // Generate list of all potential fight outcomes
+    var outcomeItems = [];
+    function buildOutcomes(outcomesSoFar, betsRemaining) {
+        if (betsRemaining.length === 0) {
+            outcomeItems.push(outcomesSoFar);
+        } else {
+            // Setup win loss outcomes for next bet
+            var nextBet = betsRemaining[0];
+            var nextBetWin = {"profit": nextBet.profit, "probability": nextBet.probability};
+            var nextBetLoss = {"profit": -nextBet.wager, "probability": 1.0 - nextBet.probability};
+
+            // Evaluate outcomes for following bets
+            buildOutcomes(outcomesSoFar.concat(nextBetWin), betsRemaining.slice(1));
+            buildOutcomes(outcomesSoFar.concat(nextBetLoss), betsRemaining.slice(1));
+        }
+    }
+    buildOutcomes([], betData);
+    var totalProb = 0;
+    var plotItems = outcomeItems.map(function(outcome) {
+        var profit = outcome.reduce(function(prev, curr) { return prev + curr.profit; }, 0);
+        var probability = outcome.reduce(function(prev, curr) { return prev * curr.probability; }, 1.0);
+        totalProb += probability;
+        return {"profit": profit, "probability": probability};
+    });
+
+    return plotItems;
+}

@@ -287,7 +287,7 @@ function updateWinProfit(inputElement) {
     $row.find(".win_profit").text("$" + winProfit.toFixed(2));
 
     // Update scatterplot
-    var plotData = [];
+    var betData = [];
     var portfolioRows = $("#portfolio_table").find("tr");
     var numRows = portfolioRows.length;
     for (var i = 0; i < numRows; i++) {
@@ -296,16 +296,16 @@ function updateWinProfit(inputElement) {
 
         // Check if row has wager defined
         if (typeof rowWager !== "undefined" && rowWager !== "") {
-            var rowProb = $(row).find(".implied_prob").text();
-            var rowProfit = $(row).find(".win_profit").text();
+            var rowProb = $(row).find(".implied_prob").text().replace("%", "") / 100.0;
+            var rowProfit = $(row).find(".win_profit").text().replace("$", "");
 
             // add row data as item for scatter plot
-            plotItem = {"wager": rowWager, "probability": rowProb, "profit": rowProfit};
-            plotData.push(plotItem);
+            betItem = {"wager": parseFloat(rowWager), "probability": rowProb, "profit": parseFloat(rowProfit)};
+            betData.push(betItem);
         }
     }
 
-    var x = 8;
+    drawScatterPlot(betData);
 }
 
 function convertMoneylineToDecimal(moneyline) {
