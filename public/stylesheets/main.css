@@ -99,7 +99,7 @@ label, input {
     overflow: hidden;
 }
 .summary_table {
-    max-width: 250px;
+    max-width: 200px;
     float: left;
 }
 .probability_distribution {

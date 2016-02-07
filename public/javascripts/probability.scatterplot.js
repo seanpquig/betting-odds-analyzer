@@ -9,41 +9,50 @@ var svg = d3.select("#chart").append("svg")
     .attr("width", w + margin.l + margin.r)
     .attr("height", h + margin.t + margin.b);
 
-    // set axes, as well as details on their ticks
+// set axes, as well as details on their ticks
 var xAxis = d3.svg.axis()
     .scale(x)
-    .ticks(20)
+    .ticks(10)
     .tickSubdivide(true)
     .tickSize(6, 3, 0)
     .orient("bottom");
 
 var yAxis = d3.svg.axis()
     .scale(y)
-    .ticks(20)
+    .ticks(10)
     .tickSubdivide(true)
     .tickSize(6, 3, 0)
     .orient("left");
-
-// group that will contain all of the plots
-var groups = svg.append("g").attr("transform", "translate(" + margin.l + "," + margin.t + ")");
 
 // array of outcome types
 var outcomes = ["gain", "loss", "break-even"];
 var outcomeColors = {"gain": "#009900", "loss": "#ff0000", "break-even": "#0000ff"};
 
 // Initialize empty scatter plot
-// drawScatterPlot([{}]);
+drawScatterPlot([]);
 
 function drawScatterPlot(betData) {
+    // Clear data from earlier plots
+    svg.selectAll("*").remove();
 
+    // group that will contain all of the plots
+    var groups = svg.append("g").attr("transform", "translate(" + margin.l + "," + margin.t + ")");
+
+    // Get all possible outcomes based on bets
     var data = generateOutcomePlotItems(betData);
 
-    // sort data alphabetically by outcome, so that the colors match with legend
-    data.sort(function(a, b) { return d3.ascending(a.outcome, b.outcome); });
-    console.log(data);
-
-    var x0 = Math.max(-d3.min(data, function(d) { return d.profit; }), d3.max(data, function(d) { return d.profit; }));
-    x.domain([-100, 100]);
+    // Set plot range
+    if (data.length === 0) {
+        x.domain([-100, 100]);
+    } else {
+        var xPad = 0.1 * Math.max(
+            -d3.min(data, function(d) { return d.profit; }),
+            d3.max(data, function(d) { return d.profit; })
+        );
+        var x0 = d3.min(data, function(d) { return d.profit; }) - xPad;
+        var x1 = d3.max(data, function(d) { return d.profit; }) + xPad;
+        x.domain([x0, x1]);
+    }
     y.domain([0, 100]);
 
     // style the circles, set their locations based on data
@@ -52,10 +61,10 @@ function drawScatterPlot(betData) {
         .enter().append("circle")
         .attr("class", "circles")
         .attr({
-            cx: function(d) { return x(+d.profit); },
-            cy: function(d) { return y(+d.probability); },
-            r: 8
-            // id: function(d) { return d.country; }
+            cx: function(d) { return x(d.profit); },
+            cy: function(d) { return y(d.probability); },
+            r: 8,
+            id: function(d) { return d.outcome; }
         })
         .style("fill", function(d) { return outcomeColors[d.outcome]; });
 
@@ -66,7 +75,7 @@ function drawScatterPlot(betData) {
         // transition to increase size/opacity of bubble
         circle.transition()
             .duration(800).style("opacity", 1)
-            .attr("r", 16).ease("elastic");
+            .attr("r", 12).ease("elastic");
 
         // append lines to bubbles that will be used to show the precise data points.
         // translate their location based on margins
@@ -135,7 +144,7 @@ function drawScatterPlot(betData) {
 
     // tooltips (using jQuery plugin tipsy)
     circles.append("title")
-        .text(function(d) { return d.country; });
+        .text(function(d) { return d.outcome; });
 
     $(".circles").tipsy({ gravity: 's', });
 
@@ -194,15 +203,6 @@ function drawScatterPlot(betData) {
 }
 
 function generateOutcomePlotItems(betData) {
-    // Pull out fields of betData
-    var wagers = betData.map(function(x) { return parseFloat(x.wager); });
-    var probabilites = betData.map(function(x) { return parseFloat(x.probability); });
-    var profits = betData.map(function(x) { return parseFloat(x.profit); });
-    // Calculate relevant sums
-    var totalWager = wagers.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
-    var maxProfit = profits.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
-
-    // Generate list of all potential fight outcomes
     var outcomeItems = [];
     function buildOutcomes(outcomesSoFar, betsRemaining) {
         if (betsRemaining.length === 0) {
@@ -218,16 +218,43 @@ function generateOutcomePlotItems(betData) {
             buildOutcomes(outcomesSoFar.concat(nextBetLoss), betsRemaining.slice(1));
         }
     }
-    buildOutcomes([], betData);
 
-    // Transalte outcome arrays into summary data to be plotted
-    var plotItems = outcomeItems.map(function(outcome) {
-        var profit = outcome.reduce(function(prev, curr) { return prev + curr.profit; }, 0);
-        var probability = outcome.reduce(function(prev, curr) { return prev * curr.probability; }, 100.0);
-        var outcomeStr;
-        if (profit > 0) outcomeStr = "gain"; else if (profit < 0) outcomeStr = "loss"; else outcomeStr = "break-even";
-        return {"profit": profit, "probability": probability, "outcome": outcomeStr};
-    });
+    if (betData.length === 0) {
+        return [];
+    } else {
+        // Pull out fields of betData
+        var wagers = betData.map(function(x) { return parseFloat(x.wager); });
+        var probabilites = betData.map(function(x) { return parseFloat(x.probability); });
+        var profits = betData.map(function(x) { return parseFloat(x.profit); });
+        // Calculate relevant sums
+        var totalWager = wagers.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
+        var maxProfit = profits.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
 
-    return plotItems;
+        // Generate list of all potential fight outcomes
+        buildOutcomes([], betData);
+
+        // Transalte outcome arrays into summary data to be plotted
+        var plotItems = outcomeItems.map(function(outcome) {
+            var profit = outcome.reduce(function(prev, curr) { return prev + curr.profit; }, 0);
+            var probability = outcome.reduce(function(prev, curr) { return prev * curr.probability; }, 100.0);
+            var outcomeStr;
+            if (profit > 0) outcomeStr = "gain"; else if (profit < 0) outcomeStr = "loss"; else outcomeStr = "break-even";
+            return {"profit": profit, "probability": probability, "outcome": outcomeStr};
+        });
+
+        // Update portfolio summary table
+        var expectedProfit = plotItems.reduce(
+            function(prev, curr) {
+                return prev + (curr.profit * curr.probability / 100.0);
+            }, 0).toFixed(2);
+        var maxReturn = (maxProfit / totalWager * 100.0).toFixed(2);
+        var expectedReturn = (expectedProfit / totalWager * 100.0).toFixed(2);
+        $(".summary_table").find(".total_bet").html("$" + totalWager);
+        $(".summary_table").find(".max_profit").html("$" + maxProfit);
+        $(".summary_table").find(".expected_profit").html("$" + expectedProfit);
+        $(".summary_table").find(".max_return").html(maxReturn + "%");
+        $(".summary_table").find(".expected_return").html(expectedReturn + "%");
+
+        return plotItems;
+    }
 }
