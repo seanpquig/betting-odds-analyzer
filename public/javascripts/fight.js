@@ -317,7 +317,4 @@ function convertMoneylineToDecimal(moneyline) {
     else if (moneyline > 0) {
         return (100 + moneyline) / 100;
     }
-    else {
-        alert("A moneyline of 0 is invalid!!");
-    }
 }
