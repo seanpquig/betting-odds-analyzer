@@ -69,6 +69,7 @@ label, input {
     color: white;
     background-color: #333;
     border: 3px groove #00b7e6;
+    border-radius: 3px;
     box-sizing: border-box;
 }
 .vs {
