@@ -54,8 +54,8 @@ function drawScatterPlot(betData) {
         .attr({
             cx: function(d) { return x(+d.profit); },
             cy: function(d) { return y(+d.probability); },
-            r: 8,
-            id: function(d) { return d.country; }
+            r: 8
+            // id: function(d) { return d.country; }
         })
         .style("fill", function(d) { return outcomeColors[d.outcome]; });
 
@@ -219,12 +219,14 @@ function generateOutcomePlotItems(betData) {
         }
     }
     buildOutcomes([], betData);
-    var totalProb = 0;
+
+    // Transalte outcome arrays into summary data to be plotted
     var plotItems = outcomeItems.map(function(outcome) {
         var profit = outcome.reduce(function(prev, curr) { return prev + curr.profit; }, 0);
-        var probability = outcome.reduce(function(prev, curr) { return prev * curr.probability; }, 1.0);
-        totalProb += probability;
-        return {"profit": profit, "probability": probability};
+        var probability = outcome.reduce(function(prev, curr) { return prev * curr.probability; }, 100.0);
+        var outcomeStr;
+        if (profit > 0) outcomeStr = "gain"; else if (profit < 0) outcomeStr = "loss"; else outcomeStr = "break-even";
+        return {"profit": profit, "probability": probability, "outcome": outcomeStr};
     });
 
     return plotItems;
