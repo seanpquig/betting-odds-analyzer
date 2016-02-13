@@ -224,11 +224,13 @@ function generateOutcomePlotItems(betData) {
     } else {
         // Pull out fields of betData
         var wagers = betData.map(function(x) { return parseFloat(x.wager); });
-        var probabilites = betData.map(function(x) { return parseFloat(x.probability); });
         var profits = betData.map(function(x) { return parseFloat(x.profit); });
         // Calculate relevant sums
         var totalWager = wagers.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
         var maxProfit = profits.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
+
+        // Combine bets that belong to the same fight since they are jointly dependent on eachother
+        // ADD CODE
 
         // Generate list of all potential fight outcomes
         buildOutcomes([], betData);
