@@ -219,6 +219,18 @@ function applyCellNavigation() {
 }
 applyCellNavigation();
 
+// String hash function for generating unique fight ID
+hashCode = function(str){
+    var hash = 0;
+    if (str.length === 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+};
+
 //Functions to support editing the portfolio
 $(function() {
     $("#add_fight_button").click(function() {
@@ -229,8 +241,10 @@ $(function() {
         var moneyline1 = athlete1.find(".odds")[0].innerText;
         var moneyline2 = athlete2.find(".odds")[0].innerText;
         if (athleteName1 && athleteName2 && moneyline1 && moneyline2) {
-            addRowToPortfolio(athleteName1, moneyline1);
-            addRowToPortfolio(athleteName2, moneyline2);
+            var eventName = $("#event").val();
+            var fightId = hashCode(eventName + athleteName1 + athleteName2);
+            addRowToPortfolio(athleteName1, moneyline1, fightId);
+            addRowToPortfolio(athleteName2, moneyline2, fightId);
             updateImpliedProbabilites();
         } else {
             $("#invalidModal").modal("show");
@@ -238,7 +252,7 @@ $(function() {
     });
 });
 
-function addRowToPortfolio(athleteName, moneyline) {
+function addRowToPortfolio(athleteName, moneyline, fightId) {
     var $row = $(".athlete_fight_row").first().clone();
 
     // Clear existing data and set Name
@@ -248,16 +262,12 @@ function addRowToPortfolio(athleteName, moneyline) {
     $row.find(".wager").html("<div><span class='input-group-addon'>$</span><input type='text' size='5' onchange='updateWinProfit(this)'></div>");
     $row.find(".win_profit").empty();
 
+    // Set fight Id for identifying when bet outcomes are dependent on eachother
+    $row.attr("data-fightId", fightId);
+
     $row.appendTo("#portfolio_table");
     // apply cell navigation
     applyCellNavigation();
-}
-
-// Add empty fight to the portfolio
-function addFightToPortfolio() {
-    // Add row for each athlete
-    addRowToPortfolio("", "");
-    addRowToPortfolio("", "");
 }
 
 // Update impiled probabilites based on moneylines
