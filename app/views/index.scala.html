@@ -40,7 +40,7 @@
           <select class="form-control" id="fight" onchange="populateAthleteStats(this.value)"></select>
         </label>
         <div id='selected_fight' class='selected_fight'>
-          <table class="table table-condensed">
+          <table class="table table-condensed versus_table">
             <tr>
               <td>
                 <div id='athlete1_stats' class='athlete_stats'>
@@ -65,6 +65,22 @@
               </td>
             </tr>
           </table>
+        </div>
+        <button type="button" id="add_fight_button" class="btn btn-primary btn-lg btn-block">
+          Add fight to portfolio
+        </button>
+      </div>
+    </div>
+    <div class="modal fade" id="invalidModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Invalid fight</h4>
+          </div>
+          <div class="modal-body">
+            Athlete name and valid moneyline must exist to add to portfolio.
+          </div>
         </div>
       </div>
     </div>
@@ -110,9 +126,6 @@
             </tr>
           </tbody>
         </table>
-        <button type="button" id="add_fight_button" class="btn btn-primary btn-lg btn-block" onclick="addFightToPortfolio()">
-          Add fight to portfolio
-        </button>
       </div>
     </div>
   </div>

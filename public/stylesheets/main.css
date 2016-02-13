@@ -11,10 +11,10 @@ label, input {
     vertical-align: middle;
 }
 .table th {
-   text-align: center;   
+   text-align: center;
 }
 .table td {
-   text-align: center;   
+   text-align: center;
 }
 .table-striped>tbody>tr:nth-child(odd)>td, 
 .table-striped>tbody>tr:nth-child(odd)>th {
@@ -52,7 +52,6 @@ label, input {
 .fight_selector {
     background-color: #888888;
     padding: 10px;
-    padding-bottom: 0;
     border: 3px groove grey;
     border-radius: 3px;
     box-sizing: border-box;
@@ -65,12 +64,15 @@ label, input {
 }
 .athlete_stats {
     min-width: 100px;
-    min-height: 106px;
+    min-height: 92px;
     color: white;
     background-color: #333;
     border: 3px groove #00b7e6;
     border-radius: 3px;
     box-sizing: border-box;
+}
+.versus_table {
+    margin-bottom: 7px;
 }
 .vs {
     font-size: 20px;

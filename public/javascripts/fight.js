@@ -172,7 +172,7 @@ function populateAthleteStats(fightName) {
     );
 }
 
-// Figth portfolio cell navigation function (call on startup up and new cell creation)
+// Fight portfolio cell navigation function (call on startup up and new cell creation)
 function applyCellNavigation() {
 
     $(".wager").keypress(function(event) {
@@ -219,26 +219,22 @@ function applyCellNavigation() {
 }
 applyCellNavigation();
 
-//Functions to support drag and drop functionality
+//Functions to support editing the portfolio
 $(function() {
-    $("#selected_fight").draggable({
-      opacity: 1.0,
-      revert: true,
-      revertDuration: 100,
-      zIndex: 100
-    });
-    $("#add_fight_button").droppable({
-      drop: function(event, ui) {
-        var athlete1 = ui.draggable.find("#athlete1_stats");
-        var athlete2 = ui.draggable.find("#athlete2_stats");
+    $("#add_fight_button").click(function() {
+        var athlete1 = $(".selected_fight").find("#athlete1_stats");
+        var athlete2 = $(".selected_fight").find("#athlete2_stats");
         var athleteName1 = athlete1.find(".fullname")[0].innerText;
         var athleteName2 = athlete2.find(".fullname")[0].innerText;
         var moneyline1 = athlete1.find(".odds")[0].innerText;
         var moneyline2 = athlete2.find(".odds")[0].innerText;
-        addRowToPortfolio(athleteName1, moneyline1);
-        addRowToPortfolio(athleteName2, moneyline2);
-        updateImpliedProbabilites();
-      }
+        if (athleteName1 && athleteName2 && moneyline1 && moneyline2) {
+            addRowToPortfolio(athleteName1, moneyline1);
+            addRowToPortfolio(athleteName2, moneyline2);
+            updateImpliedProbabilites();
+        } else {
+            $("#invalidModal").modal("show");
+        }
     });
 });
 
