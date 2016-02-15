@@ -27,3 +27,6 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 
+# NodeJS (for front-end JS testing)
+node_modules
+

@@ -1,0 +1,29 @@
+{
+  "name": "betting-odds-analyzer",
+  "version": "1.0.0",
+  "description": "Testing for project's front-end",
+  "main": "test",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.21",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-jasmine": "^0.3.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seanpquig/betting-odds-analyzer.git"
+  },
+  "author": "Sean Quigley",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seanpquig/betting-odds-analyzer/issues"
+  },
+  "homepage": "https://github.com/seanpquig/betting-odds-analyzer#readme"
+}
