@@ -241,7 +241,7 @@ function generateOutcomePlotItems(betData) {
             var probability = outcome.reduce(function(prev, curr) { return prev * curr.probability; }, 100.0);
             var outcomeStr;
             if (profit > 0) outcomeStr = "gain"; else if (profit < 0) outcomeStr = "loss"; else outcomeStr = "break-even";
-            return {"profit": profit, "probability": probability, "outcome": outcomeStr};
+            return {"profit": profit, "probability": probability.toFixed(2), "outcome": outcomeStr};
         });
 
         // Update portfolio summary table
