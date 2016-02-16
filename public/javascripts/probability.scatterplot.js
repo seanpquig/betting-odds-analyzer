@@ -283,13 +283,6 @@ function generateOutcomePlotItems(betData) {
     if (betData.length === 0) {
         return [];
     } else {
-        // Pull out fields of betData
-        var wagers = betData.map(function(x) { return parseFloat(x.wager); });
-        var profits = betData.map(function(x) { return parseFloat(x.profit); });
-        // Calculate relevant sums
-        var totalWager = wagers.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
-        var maxProfit = profits.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
-
         // Combine bets that belong to the same fight since they are jointly dependent on eachother
         betData = combineConditionalBets(betData);
 
@@ -298,12 +291,25 @@ function generateOutcomePlotItems(betData) {
 
         // Transalte outcome arrays into summary data to be plotted
         var plotItems = outcomeItems.map(function(outcome) {
-            var profit = outcome.reduce(function(prev, curr) { return prev + curr.profit; }, 0);
-            var probability = outcome.reduce(function(prev, curr) { return prev * curr.probability; }, 100.0);
+            var profit = outcome.reduce(function(prev, curr) { return prev + parseFloat(curr.profit); }, 0);
+            var probability = outcome.reduce(function(prev, curr) { return prev * parseFloat(curr.probability); }, 100.0);
             var outcomeStr;
             if (profit > 0) outcomeStr = "gain"; else if (profit < 0) outcomeStr = "loss"; else outcomeStr = "break-even";
-            return {"profit": profit.toFixed(2), "probability": probability.toFixed(2), "outcome": outcomeStr};
+            return {"profit": parseFloat(profit.toFixed(2)), "probability": parseFloat(probability.toFixed(2)), "outcome": outcomeStr};
         });
+
+        // Pull out fields of betData
+        var wagers = betData.map(function(x) { return parseFloat(x.wager); });
+        var profits = betData.map(function(x) {
+            if (x.winProfit > x.lossProfit) {
+                return parseFloat(x.winProfit);
+            } else {
+                return parseFloat(x.lossProfit);
+            } 
+        });
+        // Calculate relevant sums
+        var totalWager = wagers.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
+        var maxProfit = profits.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
 
         // Update portfolio summary table
         var expectedProfit = plotItems.reduce(
