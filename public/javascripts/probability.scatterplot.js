@@ -202,6 +202,67 @@ function drawScatterPlot(betData) {
 
 }
 
+// Combine bets that belong to the same fight since they are jointly dependent on eachother
+function combineConditionalBets(betData) {
+    var fightIds = betData.map(function(x) { return parseFloat(x.fightId); });
+    var uniqueFightIds = fightIds.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+
+    // Object for grouping bets based on fightId
+    var fightIdToBetsMap = {};
+    var uniqueLen = uniqueFightIds.length
+    for (i = 0; i < uniqueLen; i++) {
+        var fightId = uniqueFightIds[i];
+        fightIdToBetsMap[fightId] = {};
+    }
+
+    // Combine bets by fightId
+    var betLen = betData.length
+    for (i = 0; i < betLen; i++) {
+        var bet = betData[i];
+        var athleteName = bet.athleteName;
+        var wager = bet.wager;
+        var probability = bet.probability;
+        var profit = bet.profit;
+        var fightId = bet.fightId;
+        if (fightIdToBetsMap[fightId][athleteName] != undefined) {
+            fightIdToBetsMap[fightId][athleteName].wager += wager;
+            fightIdToBetsMap[fightId][athleteName].profit += profit;
+        } else {
+            fightIdToBetsMap[fightId][athleteName] = {"wager": wager, "profit": profit, "probability": probability};
+        }
+    }
+
+    // Convert to orginal betData format
+    var transformedBetData = [];
+    for (i = 0; i < uniqueLen; i++) {
+        var fightData = fightIdToBetsMap[uniqueFightIds[i]];
+
+        var totalWager = 0;
+        var winProfit = null;
+        var lossProfit = null;
+        var probability = null;
+
+        var athletes = Object.keys(fightData);
+        var athletesLen = athletes.length;
+        for (j = 0; j < athletesLen; j++) {
+            var athleteName = athletes[j];
+            totalWager += fightData[athleteName].wager;
+            if (winProfit !== null) {
+                // Currently assumes there can only be one bet per athlete in a fight
+                lossProfit += fightData[athleteName].profit;
+                winProfit -= fightData[athleteName].wager;
+            } else {
+                winProfit = fightData[athleteName].profit;
+                lossProfit = -fightData[athleteName].wager;
+                probability = fightData[athleteName].probability;
+            }
+        }
+
+        transformedBetData.push({"wager": totalWager, "winProfit": winProfit, "lossProfit": lossProfit, "probability": probability});
+    }
+    return transformedBetData;
+}
+
 function generateOutcomePlotItems(betData) {
     var outcomeItems = [];
     function buildOutcomes(outcomesSoFar, betsRemaining) {
@@ -210,8 +271,8 @@ function generateOutcomePlotItems(betData) {
         } else {
             // Setup win loss outcomes for next bet
             var nextBet = betsRemaining[0];
-            var nextBetWin = {"profit": nextBet.profit, "probability": nextBet.probability};
-            var nextBetLoss = {"profit": -nextBet.wager, "probability": 1.0 - nextBet.probability};
+            var nextBetWin = {"profit": nextBet.winProfit, "probability": nextBet.probability};
+            var nextBetLoss = {"profit": nextBet.lossProfit, "probability": 1.0 - nextBet.probability};
 
             // Evaluate outcomes for following bets
             buildOutcomes(outcomesSoFar.concat(nextBetWin), betsRemaining.slice(1));
@@ -230,7 +291,7 @@ function generateOutcomePlotItems(betData) {
         var maxProfit = profits.reduce(function(prev, curr) { return prev + curr; }).toFixed(2);
 
         // Combine bets that belong to the same fight since they are jointly dependent on eachother
-        // ADD CODE
+        betData = combineConditionalBets(betData);
 
         // Generate list of all potential fight outcomes
         buildOutcomes([], betData);
@@ -241,7 +302,7 @@ function generateOutcomePlotItems(betData) {
             var probability = outcome.reduce(function(prev, curr) { return prev * curr.probability; }, 100.0);
             var outcomeStr;
             if (profit > 0) outcomeStr = "gain"; else if (profit < 0) outcomeStr = "loss"; else outcomeStr = "break-even";
-            return {"profit": profit, "probability": probability.toFixed(2), "outcome": outcomeStr};
+            return {"profit": profit.toFixed(2), "probability": probability.toFixed(2), "outcome": outcomeStr};
         });
 
         // Update portfolio summary table

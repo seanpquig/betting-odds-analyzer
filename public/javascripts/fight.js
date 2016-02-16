@@ -262,7 +262,8 @@ function addRowToPortfolio(athleteName, moneyline, fightId) {
     $row.find(".wager").html("<div><span class='input-group-addon'>$</span><input type='text' size='5' onchange='updateWinProfit(this)'></div>");
     $row.find(".win_profit").empty();
 
-    // Set fight Id for identifying when bet outcomes are dependent on eachother
+    // Set athlete name and fight Id for identifying when bet outcomes are dependent on eachother
+    $row.attr("athlete-name", athleteName);
     $row.attr("data-fight-id", fightId);
 
     $row.appendTo("#portfolio_table");
@@ -304,10 +305,17 @@ function updateWinProfit(inputElement) {
         if (typeof rowWager !== "undefined" && rowWager !== "") {
             var rowProb = $(row).find(".implied_prob").text().replace("%", "") / 100.0;
             var rowProfit = $(row).find(".win_profit").text().replace("$", "");
+            var athleteName = $(row).attr("athlete-name")
             var fightId = $(row).attr("data-fight-id");
 
             // add row data as item for scatter plot
-            betItem = {"wager": parseFloat(rowWager), "probability": rowProb, "profit": parseFloat(rowProfit), "fightId": fightId};
+            betItem = {
+                "wager": parseFloat(rowWager),
+                "probability": rowProb,
+                "profit": parseFloat(rowProfit),
+                "athleteName": athleteName,
+                "fightId": fightId
+            };
             betData.push(betItem);
         }
     }
