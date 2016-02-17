@@ -17,23 +17,36 @@ var fightToAthleteData = {};
 
 
 /************************************************
-    On page-load => populate events drop down
+    On page-load => get org id and then populate events drop down
 *************************************************/
 $(document).ready(function() {
-    var getEventsCall = jsRoutes.controllers.StatsDatabase.getEvents(8);
+    var getOrgCall = jsRoutes.controllers.StatsDatabase.getOrganizations();
     $.getJSON(
-        getEventsCall.url,
+        getOrgCall.url,
         function(data, textStatus, xhr) {
             if (textStatus == "success") {
-                $.each(data, function(index, value) {
-                    // Create option
-                    $("#event").append("<option>" + value["name"] + "</option>");
-                    // Add item to event name to ID map
-                    eventNameIdMap[value["name"].replace(/ /g,'')] = value["id"];
-                });
+                var orgId = data[0].id;
+
+                var getEventsCall = jsRoutes.controllers.StatsDatabase.getEvents(orgId);
+                $.getJSON(
+                    getEventsCall.url,
+                    function(data, textStatus, xhr) {
+                        if (textStatus == "success") {
+                            $.each(data, function(index, value) {
+                                // Create option
+                                $("#event").append("<option>" + value["name"] + "</option>");
+                                // Add item to event name to ID map
+                                eventNameIdMap[value["name"].replace(/ /g,'')] = value["id"];
+                            });
+                        }
+                        if (textStatus == "error") {
+                            alert("Error for getEvents: " + xhr.status + ": " + xhr.statusText);
+                        }
+                    }
+                );
             }
             if (textStatus == "error") {
-                alert("Error for getEvents: " + xhr.status + ": " + xhr.statusText);
+                alert("Error for getOrganizations: " + xhr.status + ": " + xhr.statusText);
             }
         }
     );
