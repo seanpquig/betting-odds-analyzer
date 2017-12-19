@@ -1,19 +1,19 @@
 package controllers
 
-import anorm._
+import javax.inject.Inject
+
 import anorm.SqlParser._
-import play.api.db.DB
-import play.api.mvc._
-import play.api.Play.current
+import anorm._
+import play.api.db.Database
 import play.api.libs.json._
+import play.api.mvc._
 
 
-class StatsDatabase extends Controller {
+class StatsDatabase @Inject()(db: Database) extends Controller {
 
   def getOrganizations = Action {
-    DB.withConnection { implicit c =>
+    db.withConnection { implicit c =>
       val parser = int("id") ~ str("name") ~ str("description") map flatten
-      SQL("SELECT * FROM organizations").as(parser.*)
       val sqlResult = SQL("SELECT * FROM organizations").as(parser.*)
       val jsonObjects = sqlResult.map { org =>
         Json.obj(
@@ -27,7 +27,7 @@ class StatsDatabase extends Controller {
   }
 
   def getEvents(orgId: Int) = Action {
-    DB.withConnection { implicit c =>
+    db.withConnection { implicit c =>
       val parser = int("id") ~ str("name") ~ date("event_date") ~ str("location") ~ int("org_id") map flatten
       val sqlResult = SQL(s"SELECT * FROM events WHERE org_id = $orgId").as(parser.*)
       val jsonObjects = sqlResult.map { event =>
@@ -44,7 +44,7 @@ class StatsDatabase extends Controller {
   }
 
   def getFights(eventId: Int) = Action {
-    DB.withConnection { implicit c =>
+    db.withConnection { implicit c =>
       val parser =
         int("id") ~
         int("event_id") ~
@@ -76,7 +76,7 @@ class StatsDatabase extends Controller {
   }
 
   def getAthlete(id: Int) = Action {
-    DB.withConnection { implicit c =>
+    db.withConnection { implicit c =>
       val parser =
         int("id") ~
         str("fullname") ~
@@ -122,7 +122,7 @@ class StatsDatabase extends Controller {
   }
 
   def getAthleteNames(fightId: Int) = Action {
-    DB.withConnection { implicit c =>
+    db.withConnection { implicit c =>
       val (athlete1, athlete2) = athleteNamesQuery(fightId)
       val athletesJson = Json.obj(
         "athlete1" -> athlete1,
@@ -133,7 +133,7 @@ class StatsDatabase extends Controller {
   }
 
   private def athleteNamesQuery(fightId: Int): (String, String) = {
-    DB.withConnection { implicit c =>
+    db.withConnection { implicit c =>
       val parser = str(1) ~ str(2) map flatten
       val sqlResult = SQL(
         s"""
@@ -157,7 +157,7 @@ class StatsDatabase extends Controller {
    */
   def getOdds(fightId: Int) = Action {
     val (athlete1, athlete2) = athleteNamesQuery(fightId)
-    DB.withConnection { implicit c =>
+    db.withConnection { implicit c =>
       val parser =
         str("visitor_athlete") ~
         str("home_athlete") ~
