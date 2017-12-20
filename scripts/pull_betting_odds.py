@@ -96,9 +96,9 @@ class OddsFeedConsumer(object):
                         next_element_is_event = True
                     else:
                         # if a banner then it's simply grouping fights within a portion of an event
-                        if element.tag == 'banner':
-                            event_sub_portion = element.attrib['vtm']
-                        elif element.tag == 'game':
+                        # if element.tag == 'banner':
+                        #     event_sub_portion = element.attrib['vtm']
+                        if element.tag == 'game':
                             visitor_athlete = element.attrib['vtm']
                             home_athlete = element.attrib['htm']
                             fight_time = element.attrib['gmtm']
@@ -114,14 +114,14 @@ class OddsFeedConsumer(object):
                             data_fields = ['league', 'event', 'event_sub_portion', 'event_location', 'visitor_athlete',
                                            'home_athlete', 'fight_time', 'visitor_moneyline', 'home_moneyline',
                                            'under_moneyline', 'over_moneyline', 'prop_count']
-                            data_vals = [league_description, current_event, event_sub_portion, event_location,
+                            data_vals = [league_description, current_event, None, event_location,
                                          visitor_athlete, home_athlete, fight_time, vistor_moneyline, home_moneyline,
                                          under_moneyline, over_moneyline, prop_count]
                             self._insert_data('fight_odds_bookmaker_eu', data_fields, data_vals)
 
 
 def args():
-    parser = argparse.ArgumentParser(description='Scrape data from Sherdog and store in MySQL database.')
+    parser = argparse.ArgumentParser(description='Get data from odds feeds and store in MySQL database.')
     parser.add_argument('--database', help='MySQL database', type=str, default='mma_betting_db')
     parser.add_argument('--db-host', help='DB host', type=str, default='localhost')
     parser.add_argument('--db-user', help='DB user', type=str, default=getpass.getuser())
