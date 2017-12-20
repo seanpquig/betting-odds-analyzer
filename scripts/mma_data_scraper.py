@@ -62,6 +62,17 @@ class SherdogScraper(object):
                 print sql + "\n"
                 return None
 
+    def _get_soup(self, url):
+        f = urllib2.urlopen(url)
+        return BeautifulSoup(f, 'lxml')
+
+    def _safe_soup_str(self, soup, name, attrs):
+        """
+        Safely get BS string field by removing unnecessary tags
+        """
+        safe_str = str(soup.find(name, attrs)).replace('<br/>', ' ')
+        return BeautifulSoup(safe_str, 'lxml').string.strip()
+
     def get_org_data(self, org):
         """
         Scrape data for a particular MMA organization
@@ -69,11 +80,10 @@ class SherdogScraper(object):
         # pull organization HTML data
         print 'Getting org data for: {0}'.format(org)
         org_url = '{}/organizations/{}'.format(self.url, org)
-        f = urllib2.urlopen(org_url)
-        soup = BeautifulSoup(f, 'html.parser')
+        soup = self._get_soup(org_url)
 
-        org_name = soup.find('h2', {'itemprop': 'name'}).string
-        description = soup.find('div', {'itemprop': 'description'}).string.strip()
+        org_name = self._safe_soup_str(soup, 'h2', {'itemprop': 'name'})
+        description = self._safe_soup_str(soup, 'div', {'itemprop': 'description'})
 
         # Add org data to MySQL
         org_fields = ['name', 'description']
@@ -93,12 +103,11 @@ class SherdogScraper(object):
         # pull event HTML data
         print '  Getting event data for: {0}'.format(event_href)
         event_url = '{}{}'.format(self.url, event_href)
-        f = urllib2.urlopen(event_url)
-        soup = BeautifulSoup(f, 'html.parser')
+        soup = self._get_soup(event_url)
 
-        event_name = soup.find('span', {'itemprop': 'name'}).string
-        date = soup.find('meta', {'itemprop': 'startDate'})['content']
-        location = soup.find('span', {'itemprop': 'location'}).string
+        event_name = self._safe_soup_str(soup, 'span', {'itemprop': 'name'})
+        date = soup.find('meta', {'itemprop': 'startDate'})['content'][:10]
+        location = self._safe_soup_str(soup, 'span', {'itemprop': 'location'})
 
         event_fields = ['name', 'event_date', 'location', 'org_id']
         event_vals = [event_name, date, location, org_id]
@@ -106,6 +115,7 @@ class SherdogScraper(object):
 
         # Pull data for events's fights
         fights = soup.findAll(['section', 'tr'], {'itemtype': 'http://schema.org/Event'})
+        # import code; code.interact(local=locals())
         for fight in fights:
             self.get_fight_data(fight, event_id)
 
@@ -136,9 +146,9 @@ class SherdogScraper(object):
 
         # Get fight result
         if athlete1.find('span', {'class': 'final_result'}):
-            result1 = athlete1.find('span', {'class': 'final_result'}).string
+            result1 = self._safe_soup_str(athlete1, 'span', {'class': 'final_result'})
         if athlete2.find('span', {'class': 'final_result'}):
-            result2 = athlete2.find('span', {'class': 'final_result'}).string
+            result2 = self._safe_soup_str(athlete2, 'span', {'class': 'final_result'})
 
         resume = fight_data.find('table', {'class': 'resume'})
         if resume:
@@ -148,13 +158,13 @@ class SherdogScraper(object):
             end_round_time = fight_attrs['Time']
             method = fight_attrs['Method']
             referee = fight_attrs['Referee']
-        else:
-            table_data = fight_data.findAll('td')
-            if table_data:
-                end_round = table_data[-2].string
-                end_round_time = table_data[-1].string
-                method = table_data[-3].contents[0]
-                referee = table_data[-3].span.string
+        # else:
+        #     table_data = fight_data.findAll('td')
+        #     if table_data:
+        #         end_round = table_data[-2].string if
+        #         end_round_time = table_data[-1].string
+        #         method = table_data[-3].contents[0]
+        #         referee = table_data[-3].span.string
 
         # Add fight data to MySQL
         fight_fields = ['event_id', 'athlete1_id', 'athlete2_id', 'athlete1_result',
@@ -169,11 +179,10 @@ class SherdogScraper(object):
         # pull athlete HTML data
         print '      Getting athlete data for: {0}'.format(athlete_href)
         athlete_url = '{}{}'.format(self.url, athlete_href)
-        f = urllib2.urlopen(athlete_url)
-        soup = BeautifulSoup(f, 'html.parser')
+        soup = self._get_soup(athlete_url)
 
         # Parse name data
-        full_name = soup.find('span', {'class': 'fn'}).string
+        full_name = self._safe_soup_str(soup, 'span', {'class': 'fn'})
         nick_name = soup.find('span', {'class': 'nickname'})
         if nick_name:
             nick_name = nick_name.find('em').string.replace("'", "\\'")
@@ -184,16 +193,16 @@ class SherdogScraper(object):
         bio_data = athlete_data.find('div', {'class': 'bio'})
         # Parse birth info
         birth_info = bio_data.find('div', {'class': 'birth_info'})
-        birth_date = birth_info.find('span', {'itemprop': 'birthDate'}).string
+        birth_date = self._safe_soup_str(birth_info, 'span', {'itemprop': 'birthDate'})
         birth_locality = birth_info.find('span', {'itemprop': 'addressLocality'})
         if birth_locality:
             birth_locality = birth_locality.string
-        nationality = birth_info.find('strong', {'itemprop': 'nationality'}).string
+        nationality = self._safe_soup_str(birth_info, 'strong', {'itemprop': 'nationality'})
         # Parse size info
         size_info = bio_data.find('div', {'class': 'size_info'})
         (height, height_unit) = tuple(size_info.find('span', {'class': 'height'}).contents[-1].strip().split())
         (weight, weight_unit) = tuple(size_info.find('span', {'class': 'weight'}).contents[-1].strip().split())
-        weight_class = size_info.find('strong', {'class': 'title'}).string
+        weight_class = self._safe_soup_str(size_info, 'strong', {'class': 'title'})
         # Validate
         if height_unit != 'cm':
             raise Exception('Height unit is not cm!')
@@ -204,7 +213,7 @@ class SherdogScraper(object):
         record_data = athlete_data.find('div', {'class': 'record'})
         # Parse wins data
         win_data = record_data.find('div', {'class': 'bio_graph'})
-        wins = win_data.find('span', {'class': 'counter'}).string
+        wins = self._safe_soup_str(win_data, 'span', {'class': 'counter'})
         wins_breakdown = win_data.findAll('span', {'class': 'graph_tag'})
         wins_breakdown = [x.contents[0].split() for x in wins_breakdown]
         wins_breakdown = dict([(x[1], x[0]) for x in wins_breakdown])
@@ -213,7 +222,7 @@ class SherdogScraper(object):
         wins_dec = wins_breakdown['DECISIONS']
         # Parse loss data
         loss_data = record_data.find('div', {'class': 'bio_graph loser'})
-        losses = loss_data.find('span', {'class': 'counter'}).string
+        losses = self._safe_soup_str(loss_data, 'span', {'class': 'counter'})
         losses_breakdown = loss_data.findAll('span', {'class': 'graph_tag'})
         losses_breakdown = [x.contents[0].split() for x in losses_breakdown]
         losses_breakdown = dict([(x[1], x[0]) for x in losses_breakdown])
