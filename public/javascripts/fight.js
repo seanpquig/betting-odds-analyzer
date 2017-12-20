@@ -24,7 +24,7 @@ $(document).ready(function() {
     $.getJSON(
         getOrgCall.url,
         function(data, textStatus, xhr) {
-            if (textStatus == "success") {
+            if (textStatus == "success" && data.length > 0) {
                 var orgId = data[0].id;
 
                 var getEventsCall = jsRoutes.controllers.StatsDatabase.getEvents(orgId);
