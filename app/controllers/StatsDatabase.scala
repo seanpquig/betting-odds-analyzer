@@ -1,15 +1,14 @@
 package controllers
 
-import javax.inject.Inject
-
 import anorm.SqlParser._
 import anorm._
+import com.google.inject.Inject
 import play.api.db.Database
 import play.api.libs.json._
 import play.api.mvc._
 
 
-class StatsDatabase @Inject()(db: Database) extends Controller {
+class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends AbstractController(cc) {
 
   def getOrganizations = Action {
     db.withConnection { implicit c =>

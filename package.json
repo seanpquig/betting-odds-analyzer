@@ -1,29 +1,41 @@
 {
   "name": "betting-odds-analyzer",
   "version": "1.0.0",
-  "description": "Testing for project's front-end",
+  "description": "Analyze sports betting based on historical statistics and current odds",
   "main": "test",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "sbt run"
+  },
+  "author": "Sean Quigley",
+  "license": "ISC",
   "directories": {
     "test": "test"
   },
-  "dependencies": {},
   "devDependencies": {
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.3.13",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.21",
-    "karma-jasmine": "^0.3.7",
     "karma-chrome-launcher": "^0.2.2",
     "karma-firefox-launcher": "^0.1.7",
-    "karma-safari-launcher": "^0.1.1"
+    "karma-jasmine": "^0.3.7",
+    "karma-safari-launcher": "^0.1.1",
+    "webpack": "^1.12.12"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-bootstrap": "^0.31.5",
+    "whatwg-fetch": "^2.0.3"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seanpquig/betting-odds-analyzer.git"
   },
-  "author": "Sean Quigley",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/seanpquig/betting-odds-analyzer/issues"
   },

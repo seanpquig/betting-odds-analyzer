@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET     /react                      controllers.Application.react
 GET     /organizations              controllers.StatsDatabase.getOrganizations
 GET     /events/:orgId              controllers.StatsDatabase.getEvents(orgId: Int)
 GET     /fights/:eventId            controllers.StatsDatabase.getFights(eventId: Int)
