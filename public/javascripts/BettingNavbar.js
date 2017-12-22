@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 
+
 function BettingNavbar(props) {
   return (
     <Navbar inverse fixedTop>

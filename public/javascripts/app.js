@@ -2,14 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Col } from 'react-bootstrap';
 import BettingNavbar from './BettingNavbar';
+import MatchSelector from './MatchSelector';
+
 
 const view = (
   <div>
     <div>
       <BettingNavbar />
     </div>
-    <Col md={12} id="table-container">
-    </Col>
+    <MatchSelector />
   </div>
 );
 
