@@ -76,8 +76,7 @@ class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends Ab
 
   def getAthlete(id: Int) = Action {
     db.withConnection { implicit c =>
-      val parser =
-        int("id") ~
+      val parser = int("id") ~
         str("fullname") ~
         get[Option[String]]("nickname") ~
         date("birth_date") ~
@@ -94,7 +93,9 @@ class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends Ab
         int("losses_ko_tko") ~
         int("losses_sub") ~
         int("losses_dec") map flatten
+
       val sqlResult = SQL(s"SELECT * FROM athletes WHERE id = $id").as(parser.*)
+
       val jsonObjects = sqlResult.map { athlete =>
         Json.obj(
           "id" -> athlete._1,
@@ -124,6 +125,7 @@ class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends Ab
     db.withConnection { implicit c =>
       val (athlete1, athlete2) = athleteNamesQuery(fightId)
       val athletesJson = Json.obj(
+        "fightId" -> fightId,
         "athlete1" -> athlete1,
         "athlete2" -> athlete2
       )
@@ -157,11 +159,11 @@ class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends Ab
   def getOdds(fightId: Int) = Action {
     val (athlete1, athlete2) = athleteNamesQuery(fightId)
     db.withConnection { implicit c =>
-      val parser =
-        str("visitor_athlete") ~
+      val parser = str("visitor_athlete") ~
         str("home_athlete") ~
         int("visitor_moneyline") ~
         int("home_moneyline") map flatten
+
       val sqlResult = SQL(
         s"""
           SELECT
