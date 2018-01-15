@@ -1,5 +1,6 @@
 import React from 'react';
 import { Col, FormGroup, ControlLabel, FormControl, Table, Button } from 'react-bootstrap';
+import { formatOdds } from './Utils';
 
 
 export default class MatchSelector extends React.Component {
@@ -72,7 +73,7 @@ class FightSelector extends React.Component {
     super(props);
     this.state = {
       // event fights received from the backend server
-      fightAthletes: {1: {id: 1, athlete1: {}, athlete2: {}}},
+      fightInfo: {1: {fight_id: 1, athlete1: {}, athlete2: {}, odds:{}}},
       activeFightId: 1
     };
     this.getFights = this.getFights.bind(this);
@@ -85,30 +86,21 @@ class FightSelector extends React.Component {
     fetch(getFightsCall.url)
       .then(response => response.json())
       .then(fights => {
-        // Get athlete data for all fights
-        const athleteUrlPairs = fights.map(fight => [fight.athlete1_id, fight.athlete2_id])
-          .map(pair => pair.map(id => jsRoutes.controllers.StatsDatabase.getAthlete(id).url));
+        // Get info for all of the event's fights
+        const fightInfoUrls = fights.map(fight => jsRoutes.controllers.StatsDatabase.getFightInfo(fight.id).url);
 
-        // Messy nested promise resolution. May be a cleaner way to do this.
-        Promise.all(
-          athleteUrlPairs.map(p =>
-            Promise.all(p.map(url => fetch(url)))
-          )
-        ).then(responses =>
-          responses.map(p => p.map(item => item.json()))
-        ).then(pairs =>
-          Promise.all(pairs.map(p => Promise.all(p)))
-        ).then(athletePairs => {
-          const fightIds = fights.map(f => f.id);
-          const fightAthletes = {};
-          for (var i = 0; i < athletePairs.length; ++i) {
-            const fightId = fightIds[i];
-            const pair = athletePairs[i];
-            fightAthletes[fightId] = Object.create({id: fightId, athlete1: pair[0], athlete2: pair[1]})
+        Promise.all(fightInfoUrls.map(url =>
+          fetch(url).then(resp => resp.json())
+        )).then(fightInfoJson => {
+          // Format and add fight info to state
+          const fightInfo = {};
+          for (var i = 0; i < fightInfoJson.length; ++i) {
+            const info = fightInfoJson[i];
+            fightInfo[info.fight_id] = info;
           }
           this.setState({
-            fightAthletes: fightAthletes,
-            activeFightId: fightIds[0]
+            fightInfo: fightInfo,
+            activeFightId: fightInfoJson[0].fight_id
           });
         })
       }).catch(function(ex) {
@@ -132,11 +124,11 @@ class FightSelector extends React.Component {
       <div>
         <ControlLabel>Fight</ControlLabel>
         <FormControl componentClass="select" onChange={this.handleChange} value={this.state.activeFightId}>
-          {Object.values(this.state.fightAthletes).map(fight => (
-            <option key={fight.id} value={fight.id}>{fight.athlete1.fullname} vs. {fight.athlete2.fullname}</option>
+          {Object.values(this.state.fightInfo).map(info => (
+            <option key={info.fight_id} value={info.fight_id}>{info.athlete1.fullname} vs. {info.athlete2.fullname}</option>
           ))}
         </FormControl>
-        <SelectedFightTable athletes={this.state.fightAthletes[this.state.activeFightId]} />
+        <SelectedFightTable fightInfo={this.state.fightInfo[this.state.activeFightId]} />
         <Button bsStyle="primary" bsSize="large" block id="add-fight-button">
           Add fight to portfolio
         </Button>
@@ -152,8 +144,11 @@ class SelectedFightTable extends React.Component {
   }
 
   render() {
-    const athlete1 = this.props.athletes.athlete1;
-    const athlete2 = this.props.athletes.athlete2;
+    const info = this.props.fightInfo;
+    const athlete1 = info.athlete1;
+    const athlete2 = info.athlete2;
+    const odds1 = formatOdds(info.odds[athlete1.fullname]);
+    const odds2 = formatOdds(info.odds[athlete2.fullname]);
 
     return (
       <Table striped bordered condensed hover>
@@ -165,6 +160,7 @@ class SelectedFightTable extends React.Component {
                 <span className="record">{athlete1.wins}-{athlete1.losses}</span><br />
                 <span className="weight">{athlete1.weight_kg}kg</span><br />
                 <span className="height">{athlete1.height_cm}cm</span><br />
+                <span className="odds">{odds1}</span><br />
               </div>
             </td>
             <td>Vs.</td>
@@ -174,6 +170,7 @@ class SelectedFightTable extends React.Component {
                 <span className="record">{athlete2.wins}-{athlete2.losses}</span><br />
                 <span className="weight">{athlete2.weight_kg}kg</span><br />
                 <span className="height">{athlete2.height_cm}cm</span><br />
+                <span className="odds">{odds2}</span><br />
               </div>
             </td>
           </tr>

@@ -21,6 +21,7 @@ class Application @Inject() (cc: ControllerComponents) extends AbstractControlle
         routes.javascript.StatsDatabase.getOrganizations,
         routes.javascript.StatsDatabase.getEvents,
         routes.javascript.StatsDatabase.getFights,
+        routes.javascript.StatsDatabase.getFightInfo,
         routes.javascript.StatsDatabase.getAthlete,
         routes.javascript.StatsDatabase.getAthleteNames,
         routes.javascript.StatsDatabase.getOdds

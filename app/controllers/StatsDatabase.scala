@@ -113,8 +113,9 @@ class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends Ab
       }
 
       val resultJson = Json.obj(
-        "athlete_1" -> athleteData.head,
-        "athlete_2" -> athleteData(1),
+        "fight_id" -> fightId,
+        "athlete1" -> athleteData.head,
+        "athlete2" -> athleteData(1),
         "odds" -> getOddsQuery(fightId)
       )
       Ok(resultJson)
