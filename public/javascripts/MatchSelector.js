@@ -128,6 +128,7 @@ class FightSelector extends React.Component {
             <option key={info.fight_id} value={info.fight_id}>{info.athlete1.fullname} vs. {info.athlete2.fullname}</option>
           ))}
         </FormControl>
+        <br />
         <SelectedFightTable fightInfo={this.state.fightInfo[this.state.activeFightId]} />
         <Button bsStyle="primary" bsSize="large" block id="add-fight-button">
           Add fight to portfolio
