@@ -8,6 +8,7 @@ GET     /react                      controllers.Application.react
 GET     /organizations              controllers.StatsDatabase.getOrganizations
 GET     /events/:orgId              controllers.StatsDatabase.getEvents(orgId: Int)
 GET     /fights/:eventId            controllers.StatsDatabase.getFights(eventId: Int)
+GET     /fight_info/:fightId        controllers.StatsDatabase.getFightInfo(fightId: Int)
 GET     /athletes/:id               controllers.StatsDatabase.getAthlete(id: Int)
 GET     /athlete_names/:fightId     controllers.StatsDatabase.getAthleteNames(fightId: Int)
 GET     /odds/:fightId              controllers.StatsDatabase.getOdds(fightId: Int)

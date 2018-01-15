@@ -74,6 +74,49 @@ class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends Ab
     }
   }
 
+  def getFightInfo(fightId: Int) = Action {
+    db.withConnection { implicit c =>
+      val fightParser =
+        int("id") ~
+        int("event_id") ~
+        int("athlete1_id") ~
+        int("athlete2_id") map flatten
+
+      val fightSqlResult = SQL(s"SELECT * FROM fights WHERE id = $fightId").as(fightParser.*)
+
+      val atheleteIds: List[Int] = fightSqlResult.map { case (_, _, id1: Int, id2: Int) =>
+        List(id1, id2)
+      }.head
+
+      val athleteData = atheleteIds.map { id =>
+        val parser =
+          str("fullname") ~
+          int("wins") ~
+          int("losses") ~
+          double("weight_kg") ~
+          double("height_cm") map flatten
+
+        val sqlResult = SQL(s"""
+          SELECT fullname, wins, losses, weight_kg, height_cm
+          FROM athletes WHERE id = $id
+        """).as(parser.*)
+
+        sqlResult.map { case (fullname, wins, losses, weight, height) =>
+          Json.obj(
+            "fullname" -> fullname,
+            "wins" -> wins,
+            "losses" -> losses,
+            "weight_kg" -> weight,
+            "height_cm" -> height
+          )
+        }.head
+      }
+
+      val resultJson = Json.obj("athlete_1" -> athleteData.head, "athlete_2" -> athleteData(1))
+      Ok(resultJson)
+    }
+  }
+
   def getAthlete(id: Int) = Action {
     db.withConnection { implicit c =>
       val parser = int("id") ~
@@ -179,11 +222,11 @@ class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends Ab
       val oddsRow = sqlResult.filter(row => oddsFilter(athlete1, athlete2, row))
 
       val oddsJson = oddsRow match {
-        case x :: xs =>
-        Json.obj(
-          x._1.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> x._3,
-          x._2.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> x._4
-        )
+        case (visitorAthlete, homeAthlete, visitorMoneyline, homeMoneyline) :: _ =>
+          Json.obj(
+            visitorAthlete.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> visitorMoneyline,
+            homeAthlete.toLowerCase.split(' ').map(_.capitalize).mkString(" ") -> homeMoneyline
+          )
         case Nil => Json.obj()
       }
       Ok(oddsJson)
@@ -193,14 +236,10 @@ class StatsDatabase @Inject()(db: Database, cc: ControllerComponents) extends Ab
   private def oddsFilter(athlete1: String, athlete2: String, oddsRow: (String, String, Int, Int)): Boolean = {
     val visitorAthlete = oddsRow._1.toLowerCase
     val homeAthlete = oddsRow._2.toLowerCase
+    val (ath1, ath2) = (athlete1.toLowerCase, athlete2.toLowerCase)
 
     // Check if 2 athlete parameters match the visitor/home athletes for theses odds
-    if (visitorAthlete == athlete1.toLowerCase && homeAthlete == athlete2.toLowerCase)
-      true
-    else if (visitorAthlete == athlete2.toLowerCase && homeAthlete == athlete1.toLowerCase)
-      true
-    else
-      false
+    (visitorAthlete == ath1 && homeAthlete == ath2) || (visitorAthlete == ath2 && homeAthlete == ath1)
   }
 
 }
