@@ -3,20 +3,20 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 
-import betReducer from './reducers'
+import betAppReducer from './reducers'
 import BettingNavbar from './BettingNavbar';
 import MatchSelector from './MatchSelector';
-import BetPortfolio from './BetPortfolio';
+import VisibleBetPortfolio from './BetPortfolio';
 
 
-const store = createStore(betReducer);
+const store = createStore(betAppReducer);
 
 const view = (
   <Provider store={store}>
     <div>
       <BettingNavbar />
       <MatchSelector />
-      <BetPortfolio />
+      <VisibleBetPortfolio />
     </div>
   </Provider>
 );

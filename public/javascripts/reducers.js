@@ -1,17 +1,19 @@
 import { combineReducers } from 'redux'
 
 
-function betApply(state = {}, action) {
+function portfolioChanges(state = { portfolioBets: [] }, action) {
   switch (action.type) {
-    case "ADD_TODO":
-      return state;
+    case "ADD_BET":
+      return {
+        portfolioBets: [].concat(state.portfolioBets, {name: 'McGoat', moneyLine: 200})
+      };
     default:
       return state;
   }
 }
 
-const betReducer = combineReducers({
-  betApply
+const betAppReducer = combineReducers({
+  portfolioChanges
 });
 
-export default betReducer;
+export default betAppReducer;

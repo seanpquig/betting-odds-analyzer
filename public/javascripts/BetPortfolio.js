@@ -1,13 +1,18 @@
 import React from 'react';
-import { Col, Table } from 'react-bootstrap';
+import { connect } from 'react-redux'
+import { Col, Table, Button } from 'react-bootstrap';
+import { formatOdds } from './Utils';
 
 
-export default class BetPortfolio extends React.Component {
+class BetPortfolio extends React.Component {
   render() {
     return (
       <Col md={8} id="bet-portfolio">
-
         <label>Bet Portfolio</label>
+        <br />
+        <Button bsStyle="primary" onClick={this.props.onAddBetClick}>
+          ADD ROW!!!
+        </Button>
         <Table bordered condensed hover>
           <thead>
             <tr>
@@ -19,20 +24,15 @@ export default class BetPortfolio extends React.Component {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="athlete-name">McGoat</td>
-              <td className="moneyline">-520</td>
-              <td className="implied-prob"></td>
-              <td className="wager"></td>
-              <td className="win-profit"></td>
-            </tr>
-            <tr>
-              <td className="athlete-name">RDA</td>
-              <td className="moneyline">+381</td>
-              <td className="implied-prob"></td>
-              <td className="wager"></td>
-              <td className="win-profit"></td>
-            </tr>
+            {this.props.portfolioBets.map(bet =>
+              <tr>
+                <td className="athlete-name">{bet.name}</td>
+                <td className="moneyline">{formatOdds(bet.moneyLine)}</td>
+                <td className="implied-prob"></td>
+                <td className="wager"></td>
+                <td className="win-profit"></td>
+              </tr>
+            )}
           </tbody>
         </Table>
 
@@ -40,3 +40,25 @@ export default class BetPortfolio extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    portfolioBets: state.portfolioChanges.portfolioBets
+  }
+}
+
+// Action
+const addBetAction = { type: 'ADD_BET' }
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onAddBetClick: () => dispatch(addBetAction)
+  }
+}
+
+const VisibleBetPortfolio = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BetPortfolio)
+
+export default VisibleBetPortfolio
