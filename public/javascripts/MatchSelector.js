@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import { Col, FormGroup, ControlLabel, FormControl, Table, Button } from 'react-bootstrap';
 import { formatOdds } from './Utils';
 
@@ -129,10 +130,7 @@ class FightSelector extends React.Component {
           ))}
         </FormControl>
         <br />
-        <SelectedFightTable fightInfo={this.state.fightInfo[this.state.activeFightId]} />
-        <Button bsStyle="primary" bsSize="large" block id="add-fight-button">
-          Add fight to portfolio
-        </Button>
+        <VisibileSelectedFightTable fightInfo={this.state.fightInfo[this.state.activeFightId]} />
       </div>
     );
   }
@@ -148,35 +146,55 @@ class SelectedFightTable extends React.Component {
     const info = this.props.fightInfo;
     const athlete1 = info.athlete1;
     const athlete2 = info.athlete2;
-    const odds1 = formatOdds(info.odds[athlete1.fullname]);
-    const odds2 = formatOdds(info.odds[athlete2.fullname]);
+    const odds1 = info.odds[athlete1.fullname];
+    const odds2 = info.odds[athlete2.fullname];
+
+    const newBets = [
+      { name: athlete1.fullname, moneyLine: odds1 },
+      { name: athlete2.fullname, moneyLine: odds2 }
+    ]
 
     return (
-      <Table striped bordered condensed hover>
-        <tbody>
-          <tr>
-            <td>
-              <div id='athlete1_stats' className='athlete-stats'>
-                <span className="fullname"></span>{athlete1.fullname}<br />
-                <span className="record">{athlete1.wins}-{athlete1.losses}</span><br />
-                <span className="weight">{athlete1.weight_kg}kg</span><br />
-                <span className="height">{athlete1.height_cm}cm</span><br />
-                <span className="odds">{odds1}</span><br />
-              </div>
-            </td>
-            <td>Vs.</td>
-            <td>
-              <div id='athlete2_stats' className='athlete-stats'>
-                <span className="fullname">{athlete2.fullname}</span><br />
-                <span className="record">{athlete2.wins}-{athlete2.losses}</span><br />
-                <span className="weight">{athlete2.weight_kg}kg</span><br />
-                <span className="height">{athlete2.height_cm}cm</span><br />
-                <span className="odds">{odds2}</span><br />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </Table>
+      <div>
+        <Table striped bordered condensed hover>
+          <tbody>
+            <tr>
+              <td>
+                <div id='athlete1_stats' className='athlete-stats'>
+                  <span className="fullname"></span>{athlete1.fullname}<br />
+                  <span className="record">{athlete1.wins}-{athlete1.losses}</span><br />
+                  <span className="weight">{athlete1.weight_kg}kg</span><br />
+                  <span className="height">{athlete1.height_cm}cm</span><br />
+                  <span className="odds">{formatOdds(odds1)}</span><br />
+                </div>
+              </td>
+              <td>Vs.</td>
+              <td>
+                <div id='athlete2_stats' className='athlete-stats'>
+                  <span className="fullname">{athlete2.fullname}</span><br />
+                  <span className="record">{athlete2.wins}-{athlete2.losses}</span><br />
+                  <span className="weight">{athlete2.weight_kg}kg</span><br />
+                  <span className="height">{athlete2.height_cm}cm</span><br />
+                  <span className="odds">{formatOdds(odds2)}</span><br />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+        <Button bsStyle="primary" bsSize="large" block id="add-fight-button"
+          onClick={() => this.props.onAddBetClick(newBets)}>
+          Add fight to portfolio
+        </Button>
+      </div>
     );
   }
 }
+
+// Connect SelectedFightTable to Redux
+const mapDispatchToProps = dispatch => {
+  return {
+    onAddBetClick: (newBets) => dispatch({ type: 'ADD_BET', newBets: newBets })
+  }
+}
+
+const VisibileSelectedFightTable = connect(null, mapDispatchToProps)(SelectedFightTable);

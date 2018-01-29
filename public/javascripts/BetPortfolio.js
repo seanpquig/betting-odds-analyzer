@@ -9,10 +9,6 @@ class BetPortfolio extends React.Component {
     return (
       <Col md={8} id="bet-portfolio">
         <label>Bet Portfolio</label>
-        <br />
-        <Button bsStyle="primary" onClick={this.props.onAddBetClick}>
-          ADD ROW!!!
-        </Button>
         <Table bordered condensed hover>
           <thead>
             <tr>
@@ -41,24 +37,11 @@ class BetPortfolio extends React.Component {
   }
 }
 
+// Connect BetPortfolio to Redux
 const mapStateToProps = state => {
   return {
     portfolioBets: state.portfolioChanges.portfolioBets
   }
 }
 
-// Action
-const addBetAction = { type: 'ADD_BET' }
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onAddBetClick: () => dispatch(addBetAction)
-  }
-}
-
-const VisibleBetPortfolio = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BetPortfolio)
-
-export default VisibleBetPortfolio
+export default connect(mapStateToProps, null)(BetPortfolio);

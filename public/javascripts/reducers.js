@@ -5,7 +5,7 @@ function portfolioChanges(state = { portfolioBets: [] }, action) {
   switch (action.type) {
     case "ADD_BET":
       return {
-        portfolioBets: [].concat(state.portfolioBets, {name: 'McGoat', moneyLine: 200})
+        portfolioBets: [].concat(state.portfolioBets, action.newBets)
       };
     default:
       return state;
