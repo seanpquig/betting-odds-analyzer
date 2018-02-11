@@ -15,3 +15,10 @@ export function convertMoneylineToDecimal(moneyLine) {
 export function impliedProability(moneyLine) {
   return 1 / convertMoneylineToDecimal(moneyLine);
 }
+
+export function winProfit(wager, moneyLine) {
+  if (typeof wager !== 'undefined') {
+    var profit = wager * (convertMoneylineToDecimal(moneyLine) - 1.0);
+    return profit.toFixed(2);
+  }
+}
