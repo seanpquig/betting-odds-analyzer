@@ -19,6 +19,6 @@ export function impliedProability(moneyLine) {
 export function winProfit(wager, moneyLine) {
   if (typeof wager !== 'undefined') {
     var profit = wager * (convertMoneylineToDecimal(moneyLine) - 1.0);
-    return profit.toFixed(2);
+    return profit;
   }
 }

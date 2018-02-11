@@ -6,7 +6,7 @@ import { createStore } from 'redux'
 import betAppReducer from './reducers'
 import BettingNavbar from './BettingNavbar';
 import MatchSelector from './MatchSelector';
-import VisibleBetPortfolio from './BetPortfolio';
+import BetPortfolio from './BetPortfolio';
 
 
 const store = createStore(betAppReducer);
@@ -16,7 +16,7 @@ const view = (
     <div>
       <BettingNavbar />
       <MatchSelector />
-      <VisibleBetPortfolio />
+      <BetPortfolio />
     </div>
   </Provider>
 );
