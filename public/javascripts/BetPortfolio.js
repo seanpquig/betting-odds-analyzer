@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { Col, Table, Button } from 'react-bootstrap';
-import { formatOdds } from './Utils';
+import { formatOdds, impliedProability } from './Utils';
 
 
 class BetPortfolio extends React.Component {
@@ -24,8 +24,8 @@ class BetPortfolio extends React.Component {
               <tr>
                 <td className="athlete-name">{bet.name}</td>
                 <td className="moneyline">{formatOdds(bet.moneyLine)}</td>
-                <td className="implied-prob"></td>
-                <td className="wager"></td>
+                <td className="implied-prob">{impliedProability(bet.moneyLine).toFixed(2) * 100 + "%"}</td>
+                <td className="wager" contenteditable="true"></td>
                 <td className="win-profit"></td>
               </tr>
             )}
