@@ -144,14 +144,15 @@ class SelectedFightTable extends React.Component {
 
   render() {
     const info = this.props.fightInfo;
+    const fightId = info.fight_id;
     const athlete1 = info.athlete1;
     const athlete2 = info.athlete2;
     const odds1 = info.odds[athlete1.fullname];
     const odds2 = info.odds[athlete2.fullname];
 
     const newBets = [
-      { name: athlete1.fullname, moneyLine: odds1 },
-      { name: athlete2.fullname, moneyLine: odds2 }
+      { name: athlete1.fullname, moneyLine: odds1, fightId: fightId },
+      { name: athlete2.fullname, moneyLine: odds2, fightId: fightId }
     ]
 
     return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Col, Table } from 'react-bootstrap';
+import { combineConditionalBets } from './Utils';
 
 
 export default class PortfolioStats extends React.Component {
@@ -21,10 +22,12 @@ class SummaryTable extends React.Component {
   }
 
   render() {
-    const betData = this.props.betData;
+    const betData = combineConditionalBets(this.props.betData);
     const totalBet = betData.map(b => b.wager).reduce((a, b) => a + b, 0);
     const maxProfit = betData.map(b => b.winProfit).reduce((a, b) => a + b, 0);
-    const expectedProfit = betData.map(b => b.winProfit * b.probability).reduce((a, b) => a + b, 0);
+    const expectedProfit = betData.map(b =>
+      b.winProfit * b.probability + b.lossProfit * (1.0 - b.probability)
+    ).reduce((a, b) => a + b, 0);
     const maxReturn = (totalBet > 0) ? maxProfit / totalBet * 100.0 : 0.0;
     const expectedReturn = (totalBet > 0) ? expectedProfit / totalBet * 100.0 : 0.0;
 

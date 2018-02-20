@@ -41,7 +41,8 @@ class BetPortfolio extends React.Component {
           athleteName: bet.name,
           wager: this.state.wagers[idx],
           probability: this.state.probabilities[idx],
-          winProfit: this.state.winProfits[idx]
+          winProfit: this.state.winProfits[idx],
+          fightId: bet.fightId
         }
       ));
   }
