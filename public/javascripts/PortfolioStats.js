@@ -1,6 +1,6 @@
 import React from 'react';
-import { Col, Table } from 'react-bootstrap';
-import { combineConditionalBets } from './Utils';
+import { Row, Col, Table } from 'react-bootstrap';
+import { ScatterPlot } from 'react-d3-components';
 
 
 export default class PortfolioStats extends React.Component {
@@ -22,7 +22,7 @@ class SummaryTable extends React.Component {
   }
 
   render() {
-    const betData = combineConditionalBets(this.props.betData);
+    const betData = this.props.betData;
     const totalBet = betData.map(b => b.wager).reduce((a, b) => a + b, 0);
     const maxProfit = betData.map(b => b.winProfit).reduce((a, b) => a + b, 0);
     const expectedProfit = betData.map(b =>
@@ -32,7 +32,7 @@ class SummaryTable extends React.Component {
     const expectedReturn = (totalBet > 0) ? expectedProfit / totalBet * 100.0 : 0.0;
 
     return (
-      <Col md={4} id="portfolio-stats">
+      <Col md={4} id="aggregate-stats">
         <Table bordered condensed hover>
           <tbody>
             <tr>
@@ -65,8 +65,26 @@ class SummaryTable extends React.Component {
 
 class ProbabilityScatterplot extends React.Component {
   render() {
+    const betData = this.props.betData;
+    const winData = betData.map(d => ({x: d.winProfit, y: d.probability}));
+    const lossData = betData.map(d => ({x: d.lossProfit, y: 1.0 - d.probability}));
+    const data = [
+      {label: 'Wins', values: winData},
+      {label: 'Losses', values: lossData}
+    ];
+
     return (
-      <Col md={4} id="probability-scatterplot">
+      <Col md={8} id="probability-scatterplot">
+      {betData.length > 0 &&
+        <ScatterPlot
+          data={data}
+          width={400}
+          height={400}
+          margin={{top: 10, bottom: 50, left: 50, right: 10}}
+          xAxis={{label: "profit ($)"}}
+          yAxis={{label: "probability"}}
+        />
+      }
       </Col>
     )
   }

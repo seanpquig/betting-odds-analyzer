@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { Col, Table, Button } from 'react-bootstrap';
 import PortfolioStats from './PortfolioStats';
-import { formatOdds, impliedProability, winProfit } from './Utils';
+import { formatOdds, impliedProability, winProfit, combineConditionalBets } from './Utils';
 
 
 class BetPortfolio extends React.Component {
@@ -34,7 +34,7 @@ class BetPortfolio extends React.Component {
   }
 
   getBetData() {
-    return this.props.portfolioBets
+    const betData = this.props.portfolioBets
       .filter((bet, idx) => idx in this.state.wagers)
       .map((bet, idx) => (
         {
@@ -45,6 +45,8 @@ class BetPortfolio extends React.Component {
           fightId: bet.fightId
         }
       ));
+
+    return combineConditionalBets(betData);
   }
 
   render() {
