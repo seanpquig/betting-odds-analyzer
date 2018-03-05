@@ -1,6 +1,6 @@
 name := "betting-odds-analyzer"
 
-version := "1.0-SNAPSHOT"
+version := "1.0.4"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
