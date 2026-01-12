@@ -7,7 +7,8 @@
     "test": "test"
   },
   "dependencies": {
-    "tmp": "^0.2.5"
+    "tmp": "^0.2.5",
+    "qs": ">=6.14.1"
   },
   "devDependencies": {
     "jasmine-core": "^2.4.1",
